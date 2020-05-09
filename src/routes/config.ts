@@ -29,11 +29,10 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
 router.use('/users', users_route_handler);
 
 /** STATIC HANDLERS */
-router.use('/images/image/:image_uri', async(req: Request, res: Response) => {
-    res.sendFile(path.resolve(__dirname, `../../public/images/${req.params.image_uri}`));
-});
+// router.use('/images/image/:image_uri', async(req: Request, res: Response) => {
+//     res.sendFile(path.resolve(__dirname, `../../public/images/${req.params.image_uri}`));
+// });
 
-/**  EXCEPTIONS */
 router.use(async (req: Request, res: Response, next: NextFunction) => {
     res.sendFile(path.resolve(__dirname, `../../public/index.html`));
 });

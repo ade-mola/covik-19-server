@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "mode": "14.x"
+  },
   "name": "covik",
   "version": "1.0.0",
   "description": "Backend for the Covid-19 app.",
