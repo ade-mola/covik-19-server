@@ -37,6 +37,7 @@
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.13",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "tsc": "^1.20150623.0"
   }
 }
