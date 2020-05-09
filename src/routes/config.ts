@@ -35,12 +35,7 @@ router.use('/images/image/:image_uri', async(req: Request, res: Response) => {
 
 /**  EXCEPTIONS */
 router.use(async (req: Request, res: Response, next: NextFunction) => {
-    const error = {
-        status: 404,
-        message: 'Resource not found'
-    }
-
-    next(error);
+    res.sendFile(path.resolve(__dirname, `../../public/index.html`));
 });
 
 router.use(async (error: any, req: Request, res: Response, next: NextFunction) => {
