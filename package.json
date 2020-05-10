@@ -5,10 +5,9 @@
   "name": "covik",
   "version": "1.0.0",
   "description": "Backend for the Covid-19 app.",
-  "main": "dist/index.js",
+  "main": "index.ts",
   "scripts": {
-    "start": "node dist/index.js",
-    "dev": "tsc && nodemon",
+    "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -41,6 +40,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.13",
     "socket.io": "^2.3.0",
+    "ts-node": "^8.10.1",
     "tsc": "^1.20150623.0"
   }
 }

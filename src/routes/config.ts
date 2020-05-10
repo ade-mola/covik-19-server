@@ -4,7 +4,6 @@
 
 import express, { Router, Response, Request, NextFunction } from "express";
 import path from 'path';
-import ResponseUtility from '../utilities/Response';
 
 /** ROUTE FILES */
 import users_route_handler from './Users';

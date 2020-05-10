@@ -23,6 +23,7 @@ const app: Application = express();
 app.use(express.static('public'));
 app.use(compression());
 app.use(helmet());
+app.use(cors());
 app.use(body_parser.json({limit: '100mb'}));
 app.use(body_parser.urlencoded({limit: '50mb', extended: true}));
 
