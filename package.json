@@ -7,6 +7,7 @@
   "description": "Backend for the Covid-19 app.",
   "main": "index.ts",
   "scripts": {
+    "build": "tsc",
     "start": "ts-node index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,7 +24,7 @@
   "homepage": "https://github.com/ade-mola/covik-19-server#readme",
   "devDependencies": {
     "@types/node": "^13.13.5",
-    "typescript": "^3.3.3"
+    "typescript": "^3.8.3"
   },
   "dependencies": {
     "@types/compression": "^1.7.0",
@@ -41,6 +42,7 @@
     "mongoose": "^5.9.13",
     "socket.io": "^2.3.0",
     "ts-node": "^8.10.1",
-    "tsc": "^1.20150623.0"
+    "tsc": "^1.20150623.0",
+    "tslint": "^6.1.2"
   }
 }
