@@ -86,7 +86,6 @@ var AuthService = /** @class */ (function () {
                     case 3:
                         userRecord = _a.sent();
                         Logger_1.default.info("User details persisted. Generating verfication token");
-                        token = this.generateJWT(userRecord);
                         if (!userRecord) {
                             Logger_1.default.error("Something unexpected went wrong during signup");
                             throw new Error('User cannot be created');
@@ -94,6 +93,7 @@ var AuthService = /** @class */ (function () {
                         return [4 /*yield*/, this.generateAndSendVerificationToken(userRecord)];
                     case 4:
                         _a.sent();
+                        token = this.generateJWT(userRecord);
                         user = userRecord.toObject();
                         UserMapper_1.mapUserToDTO(user);
                         Logger_1.default.info("Sign up complete. User's id is " + user.unique_key);
@@ -131,14 +131,14 @@ var AuthService = /** @class */ (function () {
                         }
                         user = user[0];
                         Logger_1.default.info("Verifying user with id: " + user.unique_key);
-                        if (user.isVerified) {
+                        if (user.is_verified) {
                             Logger_1.default.info('User already verfied');
                             return [2 /*return*/, "User already verified" /* AlreadyVerified */];
                         }
                         Logger_1.default.info('Updating user\'s verfification status to verified');
                         //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
                         //fromObject toObject is not a function
-                        return [4 /*yield*/, user.updateOne({ isVerified: true })];
+                        return [4 /*yield*/, user.updateOne({ is_verified: true })];
                     case 3:
                         //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
                         //fromObject toObject is not a function
@@ -173,7 +173,7 @@ var AuthService = /** @class */ (function () {
                             Logger_1.default.info('Could not proceed with login due to invalid credentials');
                             throw new Error('Invalid Login credentials');
                         }
-                        if (!userRecord.isVerified) {
+                        if (!userRecord.is_verified) {
                             Logger_1.default.info('Aborting login as user is yet to be verified');
                             throw new Error('Aborting login. User is yet to be verified');
                         }
@@ -199,7 +199,7 @@ var AuthService = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 3, , 4]);
-                        Logger_1.default.info('Attempting to resend verification token to ', email);
+                        Logger_1.default.info("Attempting to resend verification token to  " + email);
                         return [4 /*yield*/, UserModel.readRecord({ email: email })];
                     case 1:
                         user = _a.sent();
@@ -208,7 +208,7 @@ var AuthService = /** @class */ (function () {
                             throw new Error('We were unable to find a user with that email');
                         }
                         user = user[0];
-                        if (user.isVerified) {
+                        if (user.is_verified) {
                             Logger_1.default.info("The account associated with the provided email has already been verified");
                             return [2 /*return*/, false];
                         }
@@ -267,7 +267,7 @@ var AuthService = /** @class */ (function () {
                         host = process.env.HOST || "http://localhost:" + process.env.APP_PORT;
                         email = {
                             to: user.email,
-                            from: "insert your veified email from send grid here",
+                            from: "oaadeoye14@student.lautech.edu.ng",
                             subject: "Email Verification",
                             text: "Some uselss text",
                             html: "<p>Please verify your account by clicking the link: \n            <a href=\"" + host + "/users/auth/verify?token=" + token.token + "\">Click here to verify your account</a> </p>"

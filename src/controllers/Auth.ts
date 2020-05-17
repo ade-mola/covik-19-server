@@ -46,7 +46,7 @@ class AuthController extends SuperController {
     async resendToken(email: string): Promise<IHttpResponse> {
         const sent = await this.authService.resendToken(email);
         if (!sent) {
-            return ResponseUtility.processFailedResponse(400, 'The associated account has already been verfied')
+            return ResponseUtility.processFailedResponse(400, 'The associated account has already been verfied.please log in')
         }
         return ResponseUtility.processSuccessfulResponse(`Verification token has been sent to ${email}`)
     }

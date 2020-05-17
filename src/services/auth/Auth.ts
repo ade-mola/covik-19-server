@@ -41,13 +41,13 @@ class AuthService {
         const userRecord = await UserModel.createRecord(newUser);
         Logger.info(`User details persisted. Generating verfication token`);
 
-        const token: string = this.generateJWT(userRecord);
         if (!userRecord) {
             Logger.error(`Something unexpected went wrong during signup`);
             throw new Error('User cannot be created');
         }
 
         await this.generateAndSendVerificationToken(userRecord);
+        const token: string = this.generateJWT(userRecord);
 
         const user = userRecord.toObject();  
         mapUserToDTO(user)
@@ -137,7 +137,7 @@ class AuthService {
     public async resendToken(email: string): Promise<boolean> {
 
         try {
-            Logger.info('Attempting to resend verification token to ', email);
+            Logger.info(`Attempting to resend verification token to  ${email}`);
             let user = await UserModel.readRecord({ email })
             
             if (user.length < 1) {
@@ -185,7 +185,7 @@ class AuthService {
         // send verification email
           const email: IEmail = {
             to: user.email,
-            from: "insert your veified email from send grid here",
+            from: "insert verified email from send grid her",
             subject: "Email Verification",
             text: "Some uselss text",
             html: `<p>Please verify your account by clicking the link: 

@@ -82,7 +82,7 @@ var UserSchema = new mongoose_1.Schema({
         required: true,
         default: false
     },
-    isVerified: {
+    is_verified: {
         type: Boolean,
         default: false
     },

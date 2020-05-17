@@ -44,8 +44,13 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.use(async (error: any, req: Request, res: Response, next: NextFunction) => {
-    return res.status(error.status || 500).json ({
-        message: error.message || "Internal Server Error"
+    return res.status(error.status || 500).send({
+        success: false,
+            error: {
+                code: error.status || 500,
+                message: error.message || 'Internal Server error'
+            },
+            payload: null
     });
 });
 

@@ -131,7 +131,7 @@ router.post('/resendToken', celebrate_1.celebrate({ query: Validation_1.EmailSch
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 email = req.query.email;
-                return [4 /*yield*/, Auth_1.default.verifyUser(email)];
+                return [4 /*yield*/, Auth_1.default.resendToken(email)];
             case 1:
                 response = _a.sent();
                 if (response.success)

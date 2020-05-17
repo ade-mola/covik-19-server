@@ -134,7 +134,7 @@ var AuthController = /** @class */ (function (_super) {
                     case 1:
                         sent = _a.sent();
                         if (!sent) {
-                            return [2 /*return*/, Response_1.default.processFailedResponse(400, 'The associated account has already been verfied')];
+                            return [2 /*return*/, Response_1.default.processFailedResponse(400, 'The associated account has already been verfied.please log in')];
                         }
                         return [2 /*return*/, Response_1.default.processSuccessfulResponse("Verification token has been sent to " + email)];
                 }
