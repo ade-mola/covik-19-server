@@ -1,7 +1,4 @@
 "use strict";
-/**
- * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
-*/
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -48,86 +45,93 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var mongoose_1 = __importStar(require("mongoose"));
-var ModelHelper_1 = require("./ModelHelper");
-var UserSchema = new mongoose_1.Schema({
-    email: {
-        type: String,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    unique_key: {
-        type: String,
-        required: false
-    },
-    is_active: {
-        type: Boolean,
-        required: true,
-        default: true
-    },
-    is_deleted: {
-        type: Boolean,
-        required: true,
-        default: false
-    },
-    isVerified: {
-        type: Boolean,
-        default: false
-    },
-    createdAt: {
-        type: Date,
-        required: true,
-        default: Date.now
-    }
-});
-var User = exports = mongoose_1.default.model('User', UserSchema);
-module.exports.createRecord = function (data) { return __awaiter(_this, void 0, void 0, function () {
-    var new_record;
+var express_1 = __importDefault(require("express"));
+var celebrate_1 = require("celebrate");
+var Auth_1 = __importDefault(require("../controllers/Auth"));
+var Validation_1 = require("./Validation");
+var router = express_1.default.Router();
+router.post('/signUp', celebrate_1.celebrate({
+    body: Validation_1.UserSchema
+}), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    var response, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                new_record = new User(__assign({}, data));
-                return [4 /*yield*/, new_record.save()];
-            case 1: return [2 /*return*/, _a.sent()];
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Auth_1.default.signUp(req.body)];
+            case 1:
+                response = _a.sent();
+                if (response.success)
+                    res.status(201).send(__assign({}, response));
+                else
+                    res.status(response.error.code).send(__assign({}, response));
+                return [3 /*break*/, 3];
+            case 2:
+                error_1 = _a.sent();
+                next(error_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
-}); };
-module.exports.readRecord = function (options, pagination) { return __awaiter(_this, void 0, void 0, function () {
+}); });
+router.post('/login', celebrate_1.celebrate({
+    body: Validation_1.UserSchema
+}), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    var response, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, User.find(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), null, pagination)];
-            case 1: return [2 /*return*/, _a.sent()];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Auth_1.default.login(req.body)];
+            case 1:
+                response = _a.sent();
+                if (response.success)
+                    res.status(200).send(__assign({}, response));
+                else
+                    res.status(response.error.code).send(__assign({}, response));
+                return [3 /*break*/, 3];
+            case 2:
+                error_2 = _a.sent();
+                next(error_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
-}); };
-module.exports.updateRecord = function (options, data) { return __awaiter(_this, void 0, void 0, function () {
+}); });
+router.post('/verify', celebrate_1.celebrate({
+    query: Validation_1.TokenSchema
+}), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    var token, response, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, User.update(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), __assign({}, data))];
-            case 1: return [2 /*return*/, _a.sent()];
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                token = req.query.token;
+                return [4 /*yield*/, Auth_1.default.verifyUser(token)];
+            case 1:
+                response = _a.sent();
+                if (response.success)
+                    res.status(200).send(__assign({}, response));
+                else
+                    res.status(response.error.code).send(__assign({}, response));
+                return [3 /*break*/, 3];
+            case 2:
+                error_3 = _a.sent();
+                next(error_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
-}); };
-module.exports.deleteRecord = function (options) { return __awaiter(_this, void 0, void 0, function () {
+}); });
+router.get('/', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, User.update(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), {
-                    is_active: false,
-                    is_deleted: true
-                })];
-            case 1: return [2 /*return*/, _a.sent()];
-        }
+        res.send('auth');
+        return [2 /*return*/];
     });
-}); };
+}); });
+exports.default = router;

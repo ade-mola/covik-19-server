@@ -6,7 +6,13 @@ export interface IUser {
     _id?: any;
     email: string;
     password: string;
-    unique_key?: string;
+    unique_key: string;
     is_active?: boolean;
     is_deleted?: boolean
+    isVerified?: boolean
 }
+
+export interface IUserInputDTO {
+    email: string;
+    password: string;
+  }

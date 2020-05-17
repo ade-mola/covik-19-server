@@ -30,31 +30,41 @@ const UserSchema: Schema = new Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    isVerified: { 
+        type: Boolean, 
+        default: false 
+    },
+    createdAt: { 
+        type: Date, 
+        required: true, 
+        default: Date.now
     }
 });
 
+
 const User = exports = mongoose.model('User', UserSchema);
 
-exports.createRecord = async (data: IUser): Promise <any> => {
+module.exports.createRecord = async (data: IUser): Promise <any> => {
     const new_record = new User({ ...data });
     return await new_record.save();
 }
 
-exports.readRecord = async (options: any, pagination?: IPagination): Promise <any> => {
+module.exports.readRecord = async (options: any, pagination?: IPagination): Promise <any> => {
     return await User.find({
         ...processAlternatives(options),
         is_active: true
     }, null, pagination);
 }
 
-exports.updateRecord = async (options: any, data: IUser): Promise <any> => {
+module.exports.updateRecord = async (options: any, data: IUser): Promise <any> => {
     return await User.update({
         ...processAlternatives(options),
         is_active: true
     }, { ...data });
 }
 
-exports.deleteRecord = async (options: any) => {
+module.exports.deleteRecord = async (options: any) => {
     return await User.update({
         ...processAlternatives(options),
         is_active: true
