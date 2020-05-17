@@ -4,6 +4,7 @@ import { randomBytes } from 'crypto';
 import { sendEmail } from '../Mailer';
 import { VerificationStatus } from './enums/Verify';
 import Logger from '../../utilities/Logger';
+import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 
