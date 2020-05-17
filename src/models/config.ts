@@ -5,6 +5,8 @@
 import dotenv from 'dotenv';
 import mongoose, { Mongoose } from 'mongoose';
 
+import LoggerInstance from '../utilities/Logger'
+
 dotenv.config();
 
 class CovikDatabase {
@@ -24,7 +26,7 @@ class CovikDatabase {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             poolSize: 10
-        });
+        }).then(() => LoggerInstance.info(`Connected to ${this.database}...`));
     }
 }
 

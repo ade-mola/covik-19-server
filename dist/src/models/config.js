@@ -8,6 +8,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var dotenv_1 = __importDefault(require("dotenv"));
 var mongoose_1 = __importDefault(require("mongoose"));
+var Logger_1 = __importDefault(require("../utilities/Logger"));
 dotenv_1.default.config();
 var CovikDatabase = /** @class */ (function () {
     function CovikDatabase(mongoose) {
@@ -17,11 +18,12 @@ var CovikDatabase = /** @class */ (function () {
         this.connect();
     }
     CovikDatabase.prototype.connect = function () {
+        var _this = this;
         this.mongoose.connect(this.database, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             poolSize: 10
-        });
+        }).then(function () { return Logger_1.default.info("Connected to " + _this.database + "..."); });
     };
     return CovikDatabase;
 }());

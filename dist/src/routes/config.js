@@ -83,8 +83,13 @@ router.use(function (req, res, next) { return __awaiter(_this, void 0, void 0, f
 }); });
 router.use(function (error, req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, res.status(error.status || 500).json({
-                message: error.message || "Internal Server Error"
+        return [2 /*return*/, res.status(error.status || 500).send({
+                success: false,
+                error: {
+                    code: error.status || 500,
+                    message: error.message || 'Internal Server error'
+                },
+                payload: null
             })];
     });
 }); });

@@ -1,7 +1,4 @@
 "use strict";
-/**
- * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
-*/
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -40,30 +37,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var express_1 = __importDefault(require("express"));
-var Auth_1 = __importDefault(require("./Auth"));
-var router = express_1.default.Router();
-router.use('/auth', Auth_1.default);
-router.get('/', function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        try {
-        }
-        catch (error) {
-            next(error);
-        }
-        return [2 /*return*/];
+var Logger_1 = __importDefault(require("../utilities/Logger"));
+var sgMail = require('@sendgrid/mail');
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+function sendEmail(email) {
+    return __awaiter(this, void 0, void 0, function () {
+        var error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, sgMail.send(email)];
+                case 1:
+                    _a.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    error_1 = _a.sent();
+                    Logger_1.default.error("Something went wrong while sending email to " + email.to, error_1);
+                    throw error_1;
+                case 3: return [2 /*return*/];
+            }
+        });
     });
-}); });
-router.get('/:userId', function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        try {
-        }
-        catch (error) {
-            next(error);
-        }
-        return [2 /*return*/];
-    });
-}); });
-exports.default = router;
+}
+exports.sendEmail = sendEmail;

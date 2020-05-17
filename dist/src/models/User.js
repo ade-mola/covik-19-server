@@ -81,10 +81,19 @@ var UserSchema = new mongoose_1.Schema({
         type: Boolean,
         required: true,
         default: false
+    },
+    is_verified: {
+        type: Boolean,
+        default: false
+    },
+    createdAt: {
+        type: Date,
+        required: true,
+        default: Date.now
     }
 });
 var User = exports = mongoose_1.default.model('User', UserSchema);
-exports.createRecord = function (data) { return __awaiter(_this, void 0, void 0, function () {
+module.exports.createRecord = function (data) { return __awaiter(_this, void 0, void 0, function () {
     var new_record;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -95,7 +104,7 @@ exports.createRecord = function (data) { return __awaiter(_this, void 0, void 0,
         }
     });
 }); };
-exports.readRecord = function (options, pagination) { return __awaiter(_this, void 0, void 0, function () {
+module.exports.readRecord = function (options, pagination) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, User.find(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), null, pagination)];
@@ -103,7 +112,7 @@ exports.readRecord = function (options, pagination) { return __awaiter(_this, vo
         }
     });
 }); };
-exports.updateRecord = function (options, data) { return __awaiter(_this, void 0, void 0, function () {
+module.exports.updateRecord = function (options, data) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, User.update(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), __assign({}, data))];
@@ -111,7 +120,7 @@ exports.updateRecord = function (options, data) { return __awaiter(_this, void 0
         }
     });
 }); };
-exports.deleteRecord = function (options) { return __awaiter(_this, void 0, void 0, function () {
+module.exports.deleteRecord = function (options) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0: return [4 /*yield*/, User.update(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), {
