@@ -51,6 +51,7 @@ var Logger_1 = __importDefault(require("../../utilities/Logger"));
 var jwt = __importStar(require("jsonwebtoken"));
 var bcrypt = __importStar(require("bcrypt"));
 var uuid = __importStar(require("uuid"));
+var UserMapper_1 = require("../mappers/UserMapper");
 var Token = require('../../models/Token');
 var UserModel = require('../../models/User');
 var jwtSecret = process.env.JWT_SECRET || '';
@@ -94,9 +95,7 @@ var AuthService = /** @class */ (function () {
                     case 4:
                         _a.sent();
                         user = userRecord.toObject();
-                        Reflect.deleteProperty(user, 'password');
-                        Reflect.deleteProperty(user, '_id');
-                        Reflect.deleteProperty(user, '__v');
+                        UserMapper_1.mapUserToDTO(user);
                         Logger_1.default.info("Sign up complete. User's id is " + user.unique_key);
                         return [2 /*return*/, { user: user, token: token }];
                     case 5:
@@ -180,9 +179,7 @@ var AuthService = /** @class */ (function () {
                         }
                         token = this.generateJWT(userRecord);
                         user = userRecord.toObject();
-                        Reflect.deleteProperty(user, 'password');
-                        Reflect.deleteProperty(user, '_id');
-                        Reflect.deleteProperty(user, '__v');
+                        UserMapper_1.mapUserToDTO(user);
                         Logger_1.default.info('Login completed');
                         return [2 /*return*/, { user: user, token: token }];
                     case 3:
@@ -190,6 +187,39 @@ var AuthService = /** @class */ (function () {
                         Logger_1.default.error('Something went wrong during log in. ', error_2);
                         error_2.status = 401;
                         throw error_2;
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AuthService.prototype.resendToken = function (email) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        Logger_1.default.info('Attempting to resend verification token to ', email);
+                        return [4 /*yield*/, UserModel.readRecord({ email: email })];
+                    case 1:
+                        user = _a.sent();
+                        if (user.length < 1) {
+                            Logger_1.default.info("There is no account associated with email " + email + ". Not sending verification token.");
+                            throw new Error('We were unable to find a user with that email');
+                        }
+                        user = user[0];
+                        if (user.isVerified) {
+                            Logger_1.default.info("The account associated with the provided email has already been verified");
+                            return [2 /*return*/, false];
+                        }
+                        return [4 /*yield*/, this.generateAndSendVerificationToken(user)];
+                    case 2:
+                        _a.sent();
+                        return [2 /*return*/, true];
+                    case 3:
+                        error_3 = _a.sent();
+                        error_3.status = 400;
+                        throw error_3;
                     case 4: return [2 /*return*/];
                 }
             });

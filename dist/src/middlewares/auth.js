@@ -16,18 +16,39 @@ var jwtSecret = process.env.JWT_SECRET || '';
 function requireAuth(req, res, next) {
     if (!req.headers || !req.headers.authorization) {
         Logger_1.default.info('Failed authorization due to no header');
-        return res.status(401).send({ message: 'No authorization headers.' });
+        return res.status(401).send({
+            success: false,
+            error: {
+                code: 401,
+                message: 'No authorization headers.'
+            },
+            payload: null
+        });
     }
     var token_bearer = req.headers.authorization.split(' ');
     if (token_bearer.length != 2) {
         Logger_1.default.info('Failed authorization due to malformed token');
-        return res.status(401).send({ message: 'Malformed token.' });
+        return res.status(401).send({
+            success: false,
+            error: {
+                code: 401,
+                message: 'Malformed Token.'
+            },
+            payload: null
+        });
     }
     var token = token_bearer[1];
     return jwt.verify(token, jwtSecret, function (err) {
         if (err) {
             Logger_1.default.info('Failed authorization due to incorrect token');
-            return res.status(500).send({ auth: false, message: 'Failed to authenticate.' });
+            return res.status(500).send({
+                success: false,
+                error: {
+                    code: 500,
+                    message: 'Failed to authenticate.'
+                },
+                payload: null
+            });
         }
         return next();
     });

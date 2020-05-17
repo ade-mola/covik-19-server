@@ -81,7 +81,7 @@ class AuthService {
         user = user[0];
         Logger.info(`Verifying user with id: ${user.unique_key}`)
 
-        if (user.isVerified) {
+        if (user.is_verified) {
             Logger.info('User already verfied')
             return VerificationStatus.AlreadyVerified;
         }
@@ -90,7 +90,7 @@ class AuthService {
 
         //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
         //fromObject toObject is not a function
-        await user.updateOne({isVerified: true});
+        await user.updateOne({is_verified: true});
         Logger.info('Verification completed')
         return VerificationStatus.Verifed;
     }
@@ -116,7 +116,7 @@ class AuthService {
                 throw new Error('Invalid Login credentials');
             }
 
-            if (!userRecord.isVerified) {
+            if (!userRecord.is_verified) {
                 Logger.info('Aborting login as user is yet to be verified')
                 throw new Error('Aborting login. User is yet to be verified');
             }
@@ -147,7 +147,7 @@ class AuthService {
 
             user = user[0] as IUser
 
-            if(user.isVerified) {
+            if(user.is_verified) {
                 Logger.info(`The account associated with the provided email has already been verified`)
                 return false
             }

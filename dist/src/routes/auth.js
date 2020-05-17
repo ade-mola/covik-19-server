@@ -53,8 +53,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var celebrate_1 = require("celebrate");
 var Validation_1 = require("./Validation");
-var Auth_1 = __importDefault(require("../controllers/Auth"));
 var auth_1 = require("../middlewares/auth");
+var Auth_1 = __importDefault(require("../controllers/Auth"));
 var router = express_1.default.Router();
 router.use(celebrate_1.errors());
 router.post('/signUp', celebrate_1.celebrate({ body: Validation_1.UserSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
@@ -119,6 +119,29 @@ router.post('/verify', celebrate_1.celebrate({ query: Validation_1.TokenSchema }
             case 2:
                 error_3 = _a.sent();
                 next(error_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.post('/resendToken', celebrate_1.celebrate({ query: Validation_1.EmailSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    var email, response, error_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                email = req.query.email;
+                return [4 /*yield*/, Auth_1.default.verifyUser(email)];
+            case 1:
+                response = _a.sent();
+                if (response.success)
+                    res.status(200).send(__assign({}, response));
+                else
+                    res.status(response.error.code).send(__assign({}, response));
+                return [3 /*break*/, 3];
+            case 2:
+                error_4 = _a.sent();
+                next(error_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

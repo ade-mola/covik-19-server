@@ -57,7 +57,7 @@ router.post(
     async(req: Request, res: Response, next: NextFunction) => {
         try {
             const email = req.query.email as string
-            const response: IHttpResponse = await AuthController.verifyUser(email)
+            const response: IHttpResponse = await AuthController.resendToken(email)
             if (response.success) res.status(200).send({ ...response})
             else res.status(response.error.code).send({ ...response})  
         } catch(error) {

@@ -9,7 +9,7 @@ export interface IUser {
     unique_key: string;
     is_active?: boolean;
     is_deleted?: boolean
-    isVerified?: boolean
+    is_verified?: boolean
 }
 
 export interface IUserInputDTO {

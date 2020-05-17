@@ -111,14 +111,32 @@ var AuthController = /** @class */ (function (_super) {
                     case 1:
                         status = _a.sent();
                         switch (status) {
+                            case "User already verified" /* AlreadyVerified */:
+                                return [2 /*return*/, Response_1.default.processFailedResponse(400, status.valueOf())];
                             case "User Not Verified" /* NotVerified */:
-                                return [2 /*return*/, Response_1.default.processFailedResponse(410, 'User not verified. Incorrect or Expired Token!!')];
+                                return [2 /*return*/, Response_1.default.processFailedResponse(400, 'User not verified. Incorrect or Expired Token!!')];
                             case "User not found" /* UserNotFound */:
                                 return [2 /*return*/, Response_1.default.processFailedResponse(401, 'No user associated with the provided token')];
                             default:
                                 return [2 /*return*/, Response_1.default.processSuccessfulResponse(status.valueOf())];
                         }
                         return [2 /*return*/];
+                }
+            });
+        });
+    };
+    AuthController.prototype.resendToken = function (email) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sent;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.authService.resendToken(email)];
+                    case 1:
+                        sent = _a.sent();
+                        if (!sent) {
+                            return [2 /*return*/, Response_1.default.processFailedResponse(400, 'The associated account has already been verfied')];
+                        }
+                        return [2 /*return*/, Response_1.default.processSuccessfulResponse("Verification token has been sent to " + email)];
                 }
             });
         });
