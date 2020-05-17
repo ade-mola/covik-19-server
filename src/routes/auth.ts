@@ -52,8 +52,16 @@ router.post(
 
 });
 
-router.get('/', async (req: Request, res: Response) => {
-    res.send('auth')
+router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        res.send({
+            success: true,
+            error: null,
+            payload: 'auth endpoint'
+        })
+    } catch(error) {
+        next(error)
+    }
 });
 
 export default router

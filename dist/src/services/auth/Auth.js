@@ -175,7 +175,7 @@ var AuthService = /** @class */ (function () {
                         }
                         if (!userRecord.isVerified) {
                             Logger_1.default.info('Aborting login as user is yet to be verified');
-                            throw new Error('User is yet to be verified');
+                            throw new Error('Aborting login. User is yet to be verified');
                         }
                         token = this.generateJWT(userRecord);
                         user = userRecord.toObject();
@@ -254,24 +254,4 @@ var AuthService = /** @class */ (function () {
     };
     return AuthService;
 }());
-function requireAuth(req, res, next) {
-    if (!req.headers || !req.headers.authorization) {
-        Logger_1.default.info('Failed authorization due to no header');
-        return res.status(401).send({ message: 'No authorization headers.' });
-    }
-    var token_bearer = req.headers.authorization.split(' ');
-    if (token_bearer.length != 2) {
-        Logger_1.default.info('Failed authorization due to malformed token');
-        return res.status(401).send({ message: 'Malformed token.' });
-    }
-    var token = token_bearer[1];
-    return jwt.verify(token, jwtSecret, function (err) {
-        if (err) {
-            Logger_1.default.info('Failed authorization due to incorrect token');
-            return res.status(500).send({ auth: false, message: 'Failed to authenticate.' });
-        }
-        return next();
-    });
-}
-exports.requireAuth = requireAuth;
 exports.default = new AuthService;

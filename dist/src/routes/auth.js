@@ -54,11 +54,10 @@ var express_1 = __importDefault(require("express"));
 var celebrate_1 = require("celebrate");
 var Validation_1 = require("./Validation");
 var Auth_1 = __importDefault(require("../controllers/Auth"));
+var auth_1 = require("../middlewares/auth");
 var router = express_1.default.Router();
 router.use(celebrate_1.errors());
-router.post('/signUp', celebrate_1.celebrate({
-    body: Validation_1.UserSchema
-}), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/signUp', celebrate_1.celebrate({ body: Validation_1.UserSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     var response, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -80,9 +79,7 @@ router.post('/signUp', celebrate_1.celebrate({
         }
     });
 }); });
-router.post('/login', celebrate_1.celebrate({
-    body: Validation_1.UserSchema
-}), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/login', auth_1.requireAuth, celebrate_1.celebrate({ body: Validation_1.UserSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     var response, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -104,9 +101,7 @@ router.post('/login', celebrate_1.celebrate({
         }
     });
 }); });
-router.post('/verify', celebrate_1.celebrate({
-    query: Validation_1.TokenSchema
-}), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/verify', celebrate_1.celebrate({ query: Validation_1.TokenSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     var token, response, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
