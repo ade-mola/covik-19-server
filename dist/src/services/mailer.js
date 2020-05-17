@@ -34,7 +34,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+var Logger_1 = __importDefault(require("../utilities/Logger"));
 var sgMail = require('@sendgrid/mail');
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 function sendEmail(email) {
@@ -50,8 +54,7 @@ function sendEmail(email) {
                     return [3 /*break*/, 3];
                 case 2:
                     error_1 = _a.sent();
-                    //log error and throw forward
-                    console.error(error_1);
+                    Logger_1.default.error("Something went wrong while sending email to " + email.to, error_1);
                     throw error_1;
                 case 3: return [2 /*return*/];
             }

@@ -1,15 +1,4 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -45,6 +34,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
@@ -52,34 +44,33 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var crypto_1 = require("crypto");
-var mailer_1 = require("../mailer");
+var Mailer_1 = require("../Mailer");
+var Logger_1 = __importDefault(require("../../utilities/Logger"));
 var jwt = __importStar(require("jsonwebtoken"));
 var bcrypt = __importStar(require("bcrypt"));
 var uuid = __importStar(require("uuid"));
-var Logger_1 = __importDefault(require("../../utilities/Logger"));
 var Token = require('../../models/Token');
 var UserModel = require('../../models/User');
+var jwtSecret = process.env.JWT_SECRET || '';
 var AuthService = /** @class */ (function () {
     function AuthService() {
     }
     AuthService.prototype.signUp = function (userInputDTO) {
         return __awaiter(this, void 0, void 0, function () {
-            var existingUser, password_hash, newUser, userRecord, token, user, e_1;
+            var email, existingUser, password_hash, newUser, userRecord, token, user, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 5, , 6]);
-                        return [4 /*yield*/, UserModel.readRecord({ email: userInputDTO.email })];
+                        email = userInputDTO.email;
+                        return [4 /*yield*/, UserModel.readRecord({ email: email })];
                     case 1:
                         existingUser = _a.sent();
-                        Logger_1.default.info("existing user is " + existingUser.length);
+                        Logger_1.default.info("Attempting to signup user with email: " + email);
                         if (existingUser.length > 0) {
-                            //log user already exist
+                            Logger_1.default.info("User with email " + email + " already exists");
                             throw new Error('User already exists');
                         }
                         return [4 /*yield*/, this.generatePassword(userInputDTO.password)];
@@ -90,15 +81,15 @@ var AuthService = /** @class */ (function () {
                             password: password_hash,
                             unique_key: uuid.v4()
                         };
-                        console.log("persisting ");
                         return [4 /*yield*/, UserModel.createRecord(newUser)];
                     case 3:
                         userRecord = _a.sent();
+                        Logger_1.default.info("User details persisted. Generating verfication token");
                         token = this.generateJWT(userRecord);
                         if (!userRecord) {
+                            Logger_1.default.error("Something unexpected went wrong during signup");
                             throw new Error('User cannot be created');
                         }
-                        console.log("Successful creation");
                         return [4 /*yield*/, this.generateAndSendVerificationToken(userRecord)];
                     case 4:
                         _a.sent();
@@ -106,13 +97,12 @@ var AuthService = /** @class */ (function () {
                         Reflect.deleteProperty(user, 'password');
                         Reflect.deleteProperty(user, '_id');
                         Reflect.deleteProperty(user, '__v');
-                        Logger_1.default.info("Token is " + token);
-                        console.log(__assign({}, user));
+                        Logger_1.default.info("Sign up complete. User's id is " + user.unique_key);
                         return [2 /*return*/, { user: user, token: token }];
                     case 5:
-                        e_1 = _a.sent();
-                        //log error
-                        throw e_1;
+                        error_1 = _a.sent();
+                        error_1.status = 401;
+                        throw error_1;
                     case 6: return [2 /*return*/];
                 }
             });
@@ -120,31 +110,40 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.verify = function (token) {
         return __awaiter(this, void 0, void 0, function () {
-            var savedToken, user, updateUser;
+            var savedToken, user;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, Token.findOne({ token: token })];
+                    case 0:
+                        Logger_1.default.info("Verifying token: " + token);
+                        return [4 /*yield*/, Token.findOne({ token: token })];
                     case 1:
                         savedToken = _a.sent();
-                        Logger_1.default.info(savedToken._userId);
                         if (!savedToken) {
+                            Logger_1.default.info("Unrecognised token: " + token);
                             return [2 /*return*/, "User Not Verified" /* NotVerified */];
                         }
                         return [4 /*yield*/, UserModel.readRecord({ _id: savedToken._userId })];
                     case 2:
                         user = _a.sent();
                         if (user.length < 1) {
+                            Logger_1.default.info("Cannot find any user associated with token: " + token);
                             return [2 /*return*/, "User not found" /* UserNotFound */];
                         }
                         user = user[0];
+                        Logger_1.default.info("Verifying user with id: " + user.unique_key);
                         if (user.isVerified) {
+                            Logger_1.default.info('User already verfied');
                             return [2 /*return*/, "User already verified" /* AlreadyVerified */];
                         }
-                        Logger_1.default.info("attempting update");
+                        Logger_1.default.info('Updating user\'s verfification status to verfified');
+                        //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
+                        //fromObject toObject is not a function
                         return [4 /*yield*/, user.updateOne({ isVerified: true })];
                     case 3:
-                        updateUser = _a.sent();
-                        Logger_1.default.info("Update completed " + updateUser);
+                        //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
+                        //fromObject toObject is not a function
+                        _a.sent();
+                        Logger_1.default.info('Verification completed');
                         return [2 /*return*/, "User successfully verified" /* Verifed */];
                 }
             });
@@ -152,14 +151,18 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.login = function (userInputDTO) {
         return __awaiter(this, void 0, void 0, function () {
-            var usersFound, userRecord, validPassword, token, user;
+            var email, usersFound, userRecord, validPassword, token, user, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, UserModel.readRecord({ email: userInputDTO.email })];
+                    case 0:
+                        _a.trys.push([0, 3, , 4]);
+                        email = userInputDTO.email;
+                        Logger_1.default.info("Attempting login for user with email: " + email);
+                        return [4 /*yield*/, UserModel.readRecord({ email: email })];
                     case 1:
                         usersFound = _a.sent();
-                        Logger_1.default.info("existing user is " + usersFound.length);
                         if (usersFound.length < 1) {
+                            Logger_1.default.info("There is no account associated with email " + email);
                             throw new Error('User does not exist');
                         }
                         userRecord = usersFound[0];
@@ -167,15 +170,24 @@ var AuthService = /** @class */ (function () {
                     case 2:
                         validPassword = _a.sent();
                         if (!validPassword) {
+                            Logger_1.default.info('Could not proceed with login due to invalid credentials');
                             throw new Error('Invalid Login credentials');
                         }
                         if (!userRecord.isVerified) {
+                            Logger_1.default.info('Aborting login as user is yet to be verified');
                             throw new Error('User is yet to be verified');
                         }
                         token = this.generateJWT(userRecord);
                         user = userRecord.toObject();
                         Reflect.deleteProperty(user, 'passwrord');
+                        Logger_1.default.info('Login completed');
                         return [2 /*return*/, { user: user, token: token }];
+                    case 3:
+                        error_2 = _a.sent();
+                        Logger_1.default.error('Something went wrong during log in', error_2);
+                        error_2.status = 401;
+                        throw error_2;
+                    case 4: return [2 /*return*/];
                 }
             });
         });
@@ -212,30 +224,54 @@ var AuthService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        Logger_1.default.info("Generating verification token for user with id " + user.unique_key);
                         token = new Token({
                             _userId: user._id,
                             token: crypto_1.randomBytes(16).toString('hex')
                         });
                         token.save();
+                        Logger_1.default.info("Successfully generated token. Sending token to user's email " + user.email);
                         host = process.env.HOST || "http://localhost:" + process.env.APP_PORT;
                         email = {
                             to: user.email,
                             from: "oaadeoye14@student.lautech.edu.ng",
                             subject: "Email Verification",
                             text: "Some uselss text",
-                            html: "<p>Please verify your account by clicking the link: \n            <a href=\"https://" + host + "/users/auth/verify?token=" + token.token + "\">https://" + host + "/account/confirm/" + token.token + "</a> </p>"
+                            html: "<p>Please verify your account by clicking the link: \n            <a href=\"" + host + "/users/auth/verify?token=" + token.token + "\">" + host + "/users/auth/verify?token=" + token.token + "</a> </p>"
                         };
-                        return [4 /*yield*/, mailer_1.sendEmail(email)];
+                        return [4 /*yield*/, Mailer_1.sendEmail(email)];
                     case 1:
                         _a.sent();
+                        Logger_1.default.info('Verfication token sent!!');
                         return [2 /*return*/];
                 }
             });
         });
     };
     AuthService.prototype.generateJWT = function (user) {
-        return jwt.sign(user.toJSON(), "placeHolder_jwt_should_be_from_config");
+        Logger_1.default.info("Generating jwt token for user id: " + user.unique_key);
+        return jwt.sign(user.toJSON(), jwtSecret);
     };
     return AuthService;
 }());
+function requireAuth(req, res, next) {
+    if (!req.headers || !req.headers.authorization) {
+        Logger_1.default.info('Failed authorization due to no header');
+        return res.status(401).send({ message: 'No authorization headers.' });
+    }
+    var token_bearer = req.headers.authorization.split(' ');
+    if (token_bearer.length != 2) {
+        Logger_1.default.info('Failed authorization due to malformed token');
+        return res.status(401).send({ message: 'Malformed token.' });
+    }
+    var token = token_bearer[1];
+    return jwt.verify(token, jwtSecret, function (err) {
+        if (err) {
+            Logger_1.default.info('Failed authorization due to incorrect token');
+            return res.status(500).send({ auth: false, message: 'Failed to authenticate.' });
+        }
+        return next();
+    });
+}
+exports.requireAuth = requireAuth;
 exports.default = new AuthService;

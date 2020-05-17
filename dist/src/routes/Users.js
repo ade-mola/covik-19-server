@@ -43,9 +43,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
-var auth_1 = __importDefault(require("./auth"));
+var Auth_1 = __importDefault(require("./Auth"));
 var router = express_1.default.Router();
-router.use('/auth', auth_1.default);
+router.use('/auth', Auth_1.default);
 router.get('/', function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         try {

@@ -13,7 +13,7 @@ else {
         format: winston_1.default.format.combine(winston_1.default.format.cli(), winston_1.default.format.splat())
     }));
 }
-var LoggerInstance = winston_1.default.createLogger({
+var Logger = winston_1.default.createLogger({
     level: 'info',
     levels: winston_1.default.config.npm.levels,
     format: winston_1.default.format.combine(winston_1.default.format.timestamp({
@@ -21,4 +21,4 @@ var LoggerInstance = winston_1.default.createLogger({
     }), winston_1.default.format.errors({ stack: true }), winston_1.default.format.splat(), winston_1.default.format.json()),
     transports: transports
 });
-exports.default = LoggerInstance;
+exports.default = Logger;

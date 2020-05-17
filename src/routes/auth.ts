@@ -1,14 +1,11 @@
 import express, { Router, Response, Request, NextFunction } from "express";
-import { celebrate, errors} from 'celebrate';
-import AuthController from '../controllers/Auth'
-import path from 'path';
-import { request } from "http";
+import { celebrate, errors } from 'celebrate';
 import { IHttpResponse } from "../interfaces/HTTPRepsonse";
 import { IUserInputDTO } from "../interfaces/User";
 import { UserSchema, TokenSchema } from './Validation'
+import AuthController from '../controllers/Auth'
 
 const router: Router = express.Router();
-
 
 router.use(errors())
 
@@ -33,7 +30,7 @@ router.post(
 
 router.post(
     '/login',
-    requireAuth
+
     celebrate({
         body: UserSchema
       }),

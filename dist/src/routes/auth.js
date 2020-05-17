@@ -52,9 +52,10 @@ var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var celebrate_1 = require("celebrate");
-var Auth_1 = __importDefault(require("../controllers/Auth"));
 var Validation_1 = require("./Validation");
+var Auth_1 = __importDefault(require("../controllers/Auth"));
 var router = express_1.default.Router();
+router.use(celebrate_1.errors());
 router.post('/signUp', celebrate_1.celebrate({
     body: Validation_1.UserSchema
 }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
