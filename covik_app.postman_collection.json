@@ -1,0 +1,172 @@
+{
+	"info": {
+		"_postman_id": "cb9aa0a7-03aa-4c4a-89db-009654a8e1a8",
+		"name": "covik_app",
+		"description": "Documentation for the covid 19 app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "ping auth",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{apiId}}/users/auth",
+							"protocol": "http",
+							"host": [
+								"{{apiId}}"
+							],
+							"path": [
+								"users",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"email\",\n\t\"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{apiId}}/users/auth/signup",
+							"protocol": "http",
+							"host": [
+								"{{apiId}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"email\",\n\t\"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{apiId}}/users/auth/signup",
+							"protocol": "http",
+							"host": [
+								"{{apiId}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verifyToken",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://{{apiId}}/users/auth/verify?token=token",
+							"protocol": "http",
+							"host": [
+								"{{apiId}}"
+							],
+							"path": [
+								"users",
+								"auth",
+								"verify"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "token"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d3775065-e922-4b0f-b0ed-e937a2bd60cd",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "06781e55-3459-431b-9416-8a3af017cb21",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "5e7943f8-b9b9-44e2-8cdc-4edfcc0b053a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "7a5fbac6-b116-422f-8fe2-c96a5b575a0f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "8279b26e-4ab6-430b-90ec-73276ffdc63f",
+			"key": "apiId",
+			"value": "localhost:8585",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
