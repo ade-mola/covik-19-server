@@ -7,6 +7,7 @@ import Logger from '../../utilities/Logger';
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
+import { mapUserToDTO } from '../mappers/UserMapper';
 
 const Token = require('../../models/Token');
 const UserModel = require('../../models/User');
@@ -49,9 +50,7 @@ class AuthService {
         await this.generateAndSendVerificationToken(userRecord);
 
         const user = userRecord.toObject();  
-        Reflect.deleteProperty(user, 'password');
-        Reflect.deleteProperty(user, '_id');
-        Reflect.deleteProperty(user, '__v');
+        mapUserToDTO(user)
         
         Logger.info(`Sign up complete. User's id is ${user.unique_key}`)
         return { user, token}
@@ -124,15 +123,39 @@ class AuthService {
 
             const token: string = this.generateJWT(userRecord);
             const user = userRecord.toObject();
-            Reflect.deleteProperty(user, 'password');
-            Reflect.deleteProperty(user, '_id');
-            Reflect.deleteProperty(user, '__v');
+            mapUserToDTO(user)
 
             Logger.info('Login completed')
             return { user, token };
         } catch(error) {
             Logger.error('Something went wrong during log in. ', error);
             error.status = 401
+            throw error
+        }
+    }
+
+    public async resendToken(email: string): Promise<boolean> {
+
+        try {
+            Logger.info('Attempting to resend verification token to ', email);
+            let user = await UserModel.readRecord({ email })
+            
+            if (user.length < 1) {
+                Logger.info(`There is no account associated with email ${email}. Not sending verification token.`)
+                throw new Error('We were unable to find a user with that email')
+            }
+
+            user = user[0] as IUser
+
+            if(user.isVerified) {
+                Logger.info(`The account associated with the provided email has already been verified`)
+                return false
+            }
+
+            await this.generateAndSendVerificationToken(user);
+            return true
+        } catch(error) {
+            error.status = 400
             throw error
         }
     }
@@ -147,7 +170,7 @@ class AuthService {
         return await bcrypt.compare(plainTextPassword, hash);
     }
 
-    private async generateAndSendVerificationToken(user: any) {
+    private async generateAndSendVerificationToken(user: IUser) {
         
         Logger.info(`Generating verification token for user with id ${user.unique_key}`)
         const token = new Token({

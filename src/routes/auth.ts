@@ -2,10 +2,9 @@ import express, { Router, Response, Request, NextFunction } from "express";
 import { celebrate, errors } from 'celebrate';
 import { IHttpResponse } from "../interfaces/HTTPRepsonse";
 import { IUserInputDTO } from "../interfaces/User";
-import { UserSchema, TokenSchema } from './Validation'
-import AuthController from '../controllers/Auth'
-import Logger from "../utilities/Logger";
+import { UserSchema, TokenSchema, EmailSchema } from './Validation'
 import { requireAuth } from "../middlewares/auth";
+import AuthController from '../controllers/Auth'
 
 const router: Router = express.Router();
 
@@ -50,6 +49,20 @@ router.post(
             next(error)
         }
 
+});
+
+router.post(
+    '/resendToken', celebrate({ query: EmailSchema }),
+      
+    async(req: Request, res: Response, next: NextFunction) => {
+        try {
+            const email = req.query.email as string
+            const response: IHttpResponse = await AuthController.verifyUser(email)
+            if (response.success) res.status(200).send({ ...response})
+            else res.status(response.error.code).send({ ...response})  
+        } catch(error) {
+            next(error)
+        }
 });
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {

@@ -101,6 +101,7 @@ var AuthService = /** @class */ (function () {
                         return [2 /*return*/, { user: user, token: token }];
                     case 5:
                         error_1 = _a.sent();
+                        Logger_1.default.error('Something went wrong during log in. ', error_1);
                         error_1.status = 401;
                         throw error_1;
                     case 6: return [2 /*return*/];
@@ -135,7 +136,7 @@ var AuthService = /** @class */ (function () {
                             Logger_1.default.info('User already verfied');
                             return [2 /*return*/, "User already verified" /* AlreadyVerified */];
                         }
-                        Logger_1.default.info('Updating user\'s verfification status to verrified');
+                        Logger_1.default.info('Updating user\'s verfification status to verified');
                         //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
                         //fromObject toObject is not a function
                         return [4 /*yield*/, user.updateOne({ isVerified: true })];
@@ -179,12 +180,14 @@ var AuthService = /** @class */ (function () {
                         }
                         token = this.generateJWT(userRecord);
                         user = userRecord.toObject();
-                        Reflect.deleteProperty(user, 'passwrord');
+                        Reflect.deleteProperty(user, 'password');
+                        Reflect.deleteProperty(user, '_id');
+                        Reflect.deleteProperty(user, '__v');
                         Logger_1.default.info('Login completed');
                         return [2 /*return*/, { user: user, token: token }];
                     case 3:
                         error_2 = _a.sent();
-                        Logger_1.default.error('Something went wrong during log in', error_2);
+                        Logger_1.default.error('Something went wrong during log in. ', error_2);
                         error_2.status = 401;
                         throw error_2;
                     case 4: return [2 /*return*/];
@@ -234,10 +237,10 @@ var AuthService = /** @class */ (function () {
                         host = process.env.HOST || "http://localhost:" + process.env.APP_PORT;
                         email = {
                             to: user.email,
-                            from: "oaadeoye14@student.lautech.edu.ng",
+                            from: "insert your veified email from send grid here",
                             subject: "Email Verification",
                             text: "Some uselss text",
-                            html: "<p>Please verify your account by clicking the link: \n            <a href=\"" + host + "/users/auth/verify?token=" + token.token + "\">" + host + "/users/auth/verify?token=" + token.token + "</a> </p>"
+                            html: "<p>Please verify your account by clicking the link: \n            <a href=\"" + host + "/users/auth/verify?token=" + token.token + "\">Click here to verify your account</a> </p>"
                         };
                         return [4 /*yield*/, Mailer_1.sendEmail(email)];
                     case 1:
