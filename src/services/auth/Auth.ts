@@ -3,9 +3,7 @@ import { IEmail } from "../../interfaces/Email";
 import { randomBytes } from 'crypto';
 import { sendEmail } from '../Mailer';
 import { VerificationStatus } from './enums/Verify';
-import { NextFunction, Request, Response } from 'express';
 import Logger from '../../utilities/Logger';
-import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 
@@ -119,7 +117,7 @@ class AuthService {
 
             if (!userRecord.isVerified) {
                 Logger.info('Aborting login as user is yet to be verified')
-                throw new Error('User is yet to be verified');
+                throw new Error('Aborting login. User is yet to be verified');
             }
 
             const token: string = this.generateJWT(userRecord);
@@ -176,30 +174,5 @@ class AuthService {
         return jwt.sign(user.toJSON(), jwtSecret);
     }
 }
-
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
-        
-    if (!req.headers || !req.headers.authorization){
-        Logger.info('Failed authorization due to no header')
-        return res.status(401).send({ message: 'No authorization headers.' });
-    }
-    
-
-    const token_bearer = req.headers.authorization.split(' ');
-    if(token_bearer.length != 2){
-        Logger.info('Failed authorization due to malformed token')
-        return res.status(401).send({ message: 'Malformed token.' });
-    }
-    
-    const token = token_bearer[1];
-
-    return jwt.verify(token, jwtSecret, (err: any) => {
-      if (err) {
-        Logger.info('Failed authorization due to incorrect token')
-        return res.status(500).send({ auth: false, message: 'Failed to authenticate.' });
-      }
-      return next();
-    });
-}   
 
 export default new AuthService;

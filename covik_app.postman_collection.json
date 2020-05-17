@@ -61,7 +61,13 @@
 					"name": "login",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc19hY3RpdmUiOnRydWUsImlzX2RlbGV0ZWQiOmZhbHNlLCJpc1ZlcmlmaWVkIjpmYWxzZSwiX2lkIjoiNWVjMTRmMTg5Mjc1OWI5ZGQyMzQ3MDJkIiwiZW1haWwiOiJvbHV3YXRvYmlhZGVveWUxOEBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYiQxMCRnTFlhZWpXb254ZDlRWmplS2ZQaUhlbWg0U1FWT1BoS0tEZjVmUjlvRTFrR0ExMTJSSElCbSIsInVuaXF1ZV9rZXkiOiI2NGY3MjM2Ni1hZDE4LTQzOGYtYTM5OS0wN2FmNDEwYzJkNGUiLCJjcmVhdGVkQXQiOiIyMDIwLTA1LTE3VDE0OjUwOjAwLjIxMFoiLCJfX3YiOjAsImlhdCI6MTU4OTcyNzAwMH0.PUXeiWxbYAFz4cYwqUL0hOcyiCbdco4QEQPMAHsGfsM",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n\t\"email\": \"email\",\n\t\"password\": \"password\"\n}",
@@ -72,7 +78,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://{{apiId}}/users/auth/signup",
+							"raw": "http://{{apiId}}/users/auth/login",
 							"protocol": "http",
 							"host": [
 								"{{apiId}}"
@@ -80,7 +86,7 @@
 							"path": [
 								"users",
 								"auth",
-								"signup"
+								"login"
 							]
 						}
 					},
@@ -162,7 +168,7 @@
 	],
 	"variable": [
 		{
-			"id": "8279b26e-4ab6-430b-90ec-73276ffdc63f",
+			"id": "6420bd8b-f972-4bd3-b1bc-503b1e66ce53",
 			"key": "apiId",
 			"value": "localhost:8585",
 			"type": "string"
