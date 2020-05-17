@@ -3,7 +3,7 @@
 */
 
 import express, { Request, Response, Router, NextFunction } from 'express';
-import auth_route_handler from './auth';
+import auth_route_handler from './Auth';
 
 const router: Router = express.Router();
 

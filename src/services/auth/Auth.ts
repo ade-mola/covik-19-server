@@ -1,8 +1,8 @@
 import { IUser, IUserInputDTO } from '../../interfaces/User';
 import { IEmail } from "../../interfaces/Email";
 import { randomBytes } from 'crypto';
-import { sendEmail } from '../mailer';
-import { VerificationStatus } from './enums/verify';
+import { sendEmail } from '../Mailer';
+import { VerificationStatus } from './enums/Verify';
 import { NextFunction, Request, Response } from 'express';
 import Logger from '../../utilities/Logger';
 import * as jwt from 'jsonwebtoken';

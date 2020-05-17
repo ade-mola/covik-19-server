@@ -46,7 +46,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var crypto_1 = require("crypto");
-var Mailer_1 = require("../Mailer");
+var mailer_1 = require("../mailer");
 var Logger_1 = __importDefault(require("../../utilities/Logger"));
 var jwt = __importStar(require("jsonwebtoken"));
 var bcrypt = __importStar(require("bcrypt"));
@@ -239,7 +239,7 @@ var AuthService = /** @class */ (function () {
                             text: "Some uselss text",
                             html: "<p>Please verify your account by clicking the link: \n            <a href=\"" + host + "/users/auth/verify?token=" + token.token + "\">" + host + "/users/auth/verify?token=" + token.token + "</a> </p>"
                         };
-                        return [4 /*yield*/, Mailer_1.sendEmail(email)];
+                        return [4 /*yield*/, mailer_1.sendEmail(email)];
                     case 1:
                         _a.sent();
                         Logger_1.default.info('Verfication token sent!!');
