@@ -56,6 +56,7 @@ class AuthService {
         Logger.info(`Sign up complete. User's id is ${user.unique_key}`)
         return { user, token}
     } catch (error) {
+           Logger.error('Something went wrong during log in. ', error);
             error.status = 401
             throw error;
         }
@@ -86,7 +87,7 @@ class AuthService {
             return VerificationStatus.AlreadyVerified;
         }
         
-        Logger.info('Updating user\'s verfification status to verrified')
+        Logger.info('Updating user\'s verfification status to verified')
 
         //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
         //fromObject toObject is not a function
@@ -123,12 +124,14 @@ class AuthService {
 
             const token: string = this.generateJWT(userRecord);
             const user = userRecord.toObject();
-            Reflect.deleteProperty(user, 'passwrord')
+            Reflect.deleteProperty(user, 'password');
+            Reflect.deleteProperty(user, '_id');
+            Reflect.deleteProperty(user, '__v');
 
             Logger.info('Login completed')
             return { user, token };
         } catch(error) {
-            Logger.error('Something went wrong during log in', error);
+            Logger.error('Something went wrong during log in. ', error);
             error.status = 401
             throw error
         }
@@ -159,11 +162,11 @@ class AuthService {
         // send verification email
           const email: IEmail = {
             to: user.email,
-            from: "oaadeoye14@student.lautech.edu.ng",
+            from: "insert your veified email from send grid here",
             subject: "Email Verification",
             text: "Some uselss text",
             html: `<p>Please verify your account by clicking the link: 
-            <a href="${host}/users/auth/verify?token=${token.token}">${host}/users/auth/verify?token=${token.token}</a> </p>` 
+            <a href="${host}/users/auth/verify?token=${token.token}">Click here to verify your account</a> </p>` 
           };
 
          await sendEmail(email); 

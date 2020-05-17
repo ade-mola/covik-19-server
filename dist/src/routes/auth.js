@@ -124,9 +124,18 @@ router.post('/verify', celebrate_1.celebrate({ query: Validation_1.TokenSchema }
         }
     });
 }); });
-router.get('/', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+router.get('/', function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        res.send('auth');
+        try {
+            res.send({
+                success: true,
+                error: null,
+                payload: 'auth endpoint'
+            });
+        }
+        catch (error) {
+            next(error);
+        }
         return [2 /*return*/];
     });
 }); });
