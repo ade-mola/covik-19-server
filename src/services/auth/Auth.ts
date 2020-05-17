@@ -87,7 +87,7 @@ class AuthService {
             return VerificationStatus.AlreadyVerified;
         }
         
-        Logger.info('Updating user\'s verfification status to verfified')
+        Logger.info('Updating user\'s verfification status to verrified')
 
         //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
         //fromObject toObject is not a function

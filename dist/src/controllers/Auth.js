@@ -111,12 +111,10 @@ var AuthController = /** @class */ (function (_super) {
                     case 1:
                         status = _a.sent();
                         switch (status) {
-                            case "User already verified" /* AlreadyVerified */:
-                                return [2 /*return*/, Response_1.default.processSuccessfulResponse(status.valueOf())];
                             case "User Not Verified" /* NotVerified */:
-                                return [2 /*return*/, Response_1.default.processFailedResponse(410, 'User not verified. Expired Token!!')];
+                                return [2 /*return*/, Response_1.default.processFailedResponse(410, 'User not verified. Incorrect or Expired Token!!')];
                             case "User not found" /* UserNotFound */:
-                                return [2 /*return*/, Response_1.default.processFailedResponse(401, 'Invalid user')];
+                                return [2 /*return*/, Response_1.default.processFailedResponse(401, 'No user associated with the provided token')];
                             default:
                                 return [2 /*return*/, Response_1.default.processSuccessfulResponse(status.valueOf())];
                         }

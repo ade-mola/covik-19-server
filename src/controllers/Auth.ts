@@ -33,12 +33,10 @@ class AuthController extends SuperController {
         const status: VerificationStatus = await this.authService.verify(token);
 
         switch(status) {
-            case VerificationStatus.AlreadyVerified:
-                return ResponseUtility.processSuccessfulResponse(status.valueOf())
             case VerificationStatus.NotVerified:
-                return ResponseUtility.processFailedResponse(410, 'User not verified. Expired Token!!')    
+                return ResponseUtility.processFailedResponse(410, 'User not verified. Incorrect or Expired Token!!')    
             case VerificationStatus.UserNotFound:
-                return ResponseUtility.processFailedResponse(401, 'Invalid user')
+                return ResponseUtility.processFailedResponse(401, 'No user associated with the provided token')
             default:
                 return ResponseUtility.processSuccessfulResponse(status.valueOf())     
         }
