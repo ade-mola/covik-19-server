@@ -3,11 +3,9 @@
 */
 
 import express, { Request, Response, Router, NextFunction } from 'express';
-import auth_route_handler from './auth';
-
 const router: Router = express.Router();
 
-router.use('/auth', auth_route_handler);
+import ClusterTrackerService from '../services/cluster/tracker';
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -17,9 +15,9 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-router.get('/:userId', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/result', async (req: Request, res: Response, next: NextFunction) => {
     try {
-
+        return res.json( await ClusterTrackerService.processTestResult(req.body));
     } catch (error) {
         next(error);
     }
