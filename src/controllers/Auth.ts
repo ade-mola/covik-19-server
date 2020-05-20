@@ -3,7 +3,7 @@ import AuthService from "../services/auth/Auth"
 import ResponseUtility from '../utilities/Response';
 import { IHttpResponse } from "../interfaces/HTTPRepsonse";
 import { IUserInputDTO, IUser } from "../interfaces/User";
-import { VerificationStatus } from "../services/auth/enums/Verify";
+import { VerificationStatus } from "../services/auth/enums/verify";
 
 
 class AuthController extends SuperController {

@@ -6,7 +6,7 @@ export interface IUser {
     _id?: any;
     email: string;
     password: string;
-    unique_key: string;
+    user_id: string;
     is_active?: boolean;
     is_deleted?: boolean
     is_verified?: boolean

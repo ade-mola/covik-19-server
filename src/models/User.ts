@@ -17,9 +17,9 @@ const UserSchema: Schema = new Schema({
         type: String,
         required: true
     },
-    unique_key: {
+    user_id: {
         type: String,
-        required: false
+        required: true,
     },
     is_active: {
         type: Boolean,

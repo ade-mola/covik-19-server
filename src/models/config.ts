@@ -26,7 +26,7 @@ class CovikDatabase {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             poolSize: 10
-        }).then(() => LoggerInstance.info(`Connected to ${this.database}...`));
+        });
     }
 }
 

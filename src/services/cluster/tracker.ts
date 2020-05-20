@@ -44,12 +44,12 @@ class Tracker {
         const ids: Array<string> = this.extracOtherUserIdsFromClusters(testResult.userId, clusters.payload);
         const users = await this.userControl.readMany({ _id: { $in: [...ids] } });
 
-        if(!users.success) {
+        if(!users.success) { 
             console.log(users.error.message);
             return ResponseHelper.processSuccessfulResponse({});
         }
 
-        const uniqueKeys: Array<string> = users.payload.map( (user: IUser) => user.unique_key);
+        const uniqueKeys: Array<string> = users.payload.map( (user: IUser) => user.user_id);
         await NotificationService.sendNotification(uniqueKeys);
 
         return ResponseHelper.processSuccessfulResponse({});

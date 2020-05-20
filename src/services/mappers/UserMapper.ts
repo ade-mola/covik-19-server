@@ -1,10 +1,6 @@
 
 export function mapUserToDTO(user: any) {
-        Reflect.deleteProperty(user, '_id');
-        Reflect.deleteProperty(user, '__v');
-        Reflect.deleteProperty(user, 'password');
-        Reflect.deleteProperty(user, 'is_deleted');
-        Reflect.deleteProperty(user, 'is_active');
-        Reflect.deleteProperty(user, 'createdAt');
+        ['_id', '__v', 'password', 'is_deleted', 'is_active', 'createdAt', 'is_verified']
+        .forEach( field => Reflect.deleteProperty(user, field))
         return;
 }
