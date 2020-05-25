@@ -87,6 +87,7 @@ class AuthService {
         
         Logger.info('Updating user\'s verfification status to verified')
 
+        TODO: 'make use of update record model in the UserModel class'
         //could not make to use updateRecord method in UserModel. could not figure why it was throwing error:
         //fromObject toObject is not a function
         await user.updateOne({is_verified: true});
@@ -184,7 +185,7 @@ class AuthService {
         // send verification email
           const email: IEmail = {
             to: user.email,
-            from: "oaadeoye14@student.lautech.edu.ng",
+            from: "insert verified email from sned grid her",
             subject: "Email Verification",
             text: "Some uselss text",
             html: `<p>Please verify your account by clicking the link: 

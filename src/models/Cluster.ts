@@ -10,11 +10,18 @@ import { processAlternatives } from './ModelHelper';
 
 const ClusterSchema: Schema = new Schema({
     location: {
-        type: String,
-        required: true
+        type: {
+            type:String,
+            enum: ['Point'],
+            required: true
+        },
+        coordinates: {
+            type: [Number], //[longitude, latitude]
+            required:true
+        }
     },
     time: {
-        type: String,
+        type: Date,
         required: true
     },
     users: {
@@ -37,6 +44,7 @@ const ClusterSchema: Schema = new Schema({
     }
 });
 
+ClusterSchema.index({ "location": "2dsphere" }, {"unique":false});
 
 const Cluster = exports = mongoose.model('Cluster', ClusterSchema);
 

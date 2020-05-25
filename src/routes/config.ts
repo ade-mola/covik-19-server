@@ -4,10 +4,10 @@
 
 import express, { Router, Response, Request, NextFunction } from "express";
 import path from 'path';
-import ResponseUtility from '../utilities/Response';
 
 /** ROUTE FILES */
 import users_route_handler from './Users';
+import clusters_route_handler from './cluster'
 
 /** CONFIG */
 const router : Router = express.Router();
@@ -27,6 +27,7 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
 
 /** */
 router.use('/users', users_route_handler);
+router.use('/clusters', clusters_route_handler);
 
 /** STATIC HANDLERS */
 router.use('/images/image/:image_uri', async(req: Request, res: Response) => {

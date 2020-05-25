@@ -1,7 +1,6 @@
 /**
  * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
 */
-
 export interface IUser {
     _id?: any;
     email: string;
