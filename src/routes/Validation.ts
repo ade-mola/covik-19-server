@@ -8,3 +8,15 @@ export const UserSchema = Joi.object().keys({
 export const TokenSchema =  { token: Joi.string().token().required() }
 
 export const EmailSchema =  { email: Joi.string().email().required() }
+
+export const NewClusterSchema =   Joi.object().keys({
+  userId: Joi.string().required(),
+  time: Joi.string().required(),
+  location: Joi.string().required().regex(/-?\d+\.?\d*\:{1}-?\d+\.?\d*/)
+})
+
+export const TestResultSchema =   Joi.object().keys({
+  userId: Joi.string().required(),
+  checkInTime: Joi.string().required(), // Date as ISO string
+  isPositive: Joi.boolean().required()
+})
