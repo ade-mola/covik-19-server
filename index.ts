@@ -32,7 +32,7 @@ const routeHandler: Router = require('./src/routes/config');
 app.use('/', routeHandler);
 
 //
-const port: Number = Number(process.env.APP_PORT) || 8585;
+const port: Number = Number(process.env.PORT) || 8585;
 
 //
 app.listen(port, async () => {
