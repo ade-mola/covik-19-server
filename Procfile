@@ -1,1 +1,1 @@
-web: npm install && tsc && node ./dist/index.js
+web: node ./dist/index.js
