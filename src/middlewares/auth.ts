@@ -19,7 +19,6 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
         );
     }
     
-
     const token_bearer = req.headers.authorization.split(' ');
     if(token_bearer.length != 2){
         Logger.info('Failed authorization due to malformed token')
