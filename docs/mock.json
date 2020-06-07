@@ -1,0 +1,14 @@
+{
+    "2020-06-07": {
+        "tasks": [
+            "Research how to find geolocation for displacements (e.g 2m from given location)"
+        ],
+        "Algo": [
+            "Generate Location coordinates",
+            "Split Location coordinates into batches",
+            "Split users into batches",
+            "Match Location and users into batches",
+            "Randomize data"
+        ]
+    }
+}
