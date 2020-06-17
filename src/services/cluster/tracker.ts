@@ -138,7 +138,7 @@ class Tracker {
      * @param checkInTime time the user checks in for the test.
      */
     getTimeRange(checkInTime: string, days: number):any {
-        const currentTime: Date= new Date(Date.now());
+        const currentTime: Date = new Date(Date.now());
         const baseTime: Date =  new Date (Date.parse(checkInTime) - (days * 3600 * 24  * 1000));
 
         return { baseTime, currentTime };
