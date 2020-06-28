@@ -1,4 +1,4 @@
-cLatitude			Longitude
+Latitude			Longitude
 31.56				42.2
 26.91				56.31
 23.49				49.06
