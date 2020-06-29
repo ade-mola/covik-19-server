@@ -26,6 +26,10 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
 });
 
 /** */
+router.use((req: Request, res: Response, next: NextFunction) => {
+    console.log(`[Route Config] Incoming request: ${req.method} ${req.path}`);
+    next();
+})
 router.use('/users', users_route_handler);
 router.use('/clusters', clusters_route_handler);
 

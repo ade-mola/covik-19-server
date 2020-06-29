@@ -57,7 +57,7 @@ module.exports.readRecord = async (options: any, pagination?: IPagination): Prom
     return await Cluster.find({
         ...processAlternatives(options),
         is_active: true
-    }, null, pagination);
+    });
 }
 
 module.exports.updateRecord = async (options: any, data: ICluster): Promise <any> => {

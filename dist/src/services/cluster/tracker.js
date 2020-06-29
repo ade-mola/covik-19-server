@@ -11,10 +11,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -44,6 +45,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
+};
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
@@ -89,7 +97,7 @@ var Tracker = /** @class */ (function () {
                             return [2 /*return*/, Response_1.default.processFailedResponse(500, 'Something went wrong while processing test result')];
                         }
                         ids = this.extracOtherUserIdsFromClusters(testResult.userId, clusters.payload);
-                        return [4 /*yield*/, this.userControl.readMany({ _id: { $in: ids.slice() } })];
+                        return [4 /*yield*/, this.userControl.readMany({ _id: { $in: __spreadArrays(ids) } })];
                     case 2:
                         users = _b.sent();
                         if (!users.success) {
@@ -215,7 +223,7 @@ var Tracker = /** @class */ (function () {
     Tracker.prototype.extracOtherUserIdsFromClusters = function (userId, payload) {
         var combinedIds = [];
         payload.forEach(function (cluster) {
-            combinedIds = combinedIds.concat(cluster.users);
+            combinedIds = __spreadArrays(combinedIds, cluster.users);
         });
         return combinedIds.filter(function (id) { return userId !== id; });
     };

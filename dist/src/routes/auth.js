@@ -11,10 +11,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -48,7 +49,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var celebrate_1 = require("celebrate");
@@ -57,7 +57,7 @@ var auth_1 = require("../middlewares/auth");
 var Auth_1 = __importDefault(require("../controllers/Auth"));
 var router = express_1.default.Router();
 router.use(celebrate_1.errors());
-router.post('/signUp', celebrate_1.celebrate({ body: Validation_1.UserSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/signUp', celebrate_1.celebrate({ body: Validation_1.UserSchema }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var response, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -79,7 +79,7 @@ router.post('/signUp', celebrate_1.celebrate({ body: Validation_1.UserSchema }),
         }
     });
 }); });
-router.post('/login', auth_1.requireAuth, celebrate_1.celebrate({ body: Validation_1.UserSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/login', auth_1.requireAuth, celebrate_1.celebrate({ body: Validation_1.UserSchema }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var response, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -101,7 +101,7 @@ router.post('/login', auth_1.requireAuth, celebrate_1.celebrate({ body: Validati
         }
     });
 }); });
-router.post('/verify', celebrate_1.celebrate({ query: Validation_1.TokenSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/verify', celebrate_1.celebrate({ query: Validation_1.TokenSchema }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var token, response, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -124,7 +124,7 @@ router.post('/verify', celebrate_1.celebrate({ query: Validation_1.TokenSchema }
         }
     });
 }); });
-router.post('/resendToken', celebrate_1.celebrate({ query: Validation_1.EmailSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/resendToken', celebrate_1.celebrate({ query: Validation_1.EmailSchema }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var email, response, error_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -147,7 +147,7 @@ router.post('/resendToken', celebrate_1.celebrate({ query: Validation_1.EmailSch
         }
     });
 }); });
-router.get('/', function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.get('/', function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         try {
             res.send({

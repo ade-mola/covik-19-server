@@ -54,7 +54,7 @@ module.exports.readRecord = async (options: any, pagination?: IPagination): Prom
     return await User.find({
         ...processAlternatives(options),
         is_active: true
-    }, null, pagination);
+    }, pagination);
 }
 
 module.exports.updateRecord = async (options: any, data: IUser): Promise <any> => {
