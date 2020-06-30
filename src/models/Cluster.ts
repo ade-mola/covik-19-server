@@ -11,7 +11,7 @@ import { processAlternatives } from './ModelHelper';
 const ClusterSchema: Schema = new Schema({
     location: {
         type: {
-            type:String,
+            type: String,
             enum: ['Point'],
             required: true
         },

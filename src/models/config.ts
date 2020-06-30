@@ -26,6 +26,8 @@ class CovikDatabase {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             poolSize: 10
+        }).then( () => {
+            // this.mongoose.model('User').find({user_id: '100'}, (e, d) => console.log(d));
         });
     }
 }

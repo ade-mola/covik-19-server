@@ -23,6 +23,7 @@ const users_in_batches = generate_user_batches(users_from_file, 5);
 const min_time = Date.now() - (14 * 864000000);
 const max_time = Date.now();
 
+const generated_data = [];
 users_in_batches.forEach((batch, batch_index) => {
     batch.forEach(user => {
         const { user_id } = user;
@@ -39,14 +40,26 @@ users_in_batches.forEach((batch, batch_index) => {
                 userId: user_id,
             }
 
-            fetch.post(`https://localhost:8585/clusters`, { ...cluster_data })
-                .then(() => console.log(cluster_data))
-                .catch(err => console.log(err.message));
+            generated_data.push(cluster_data);
         }
-
     });
 });
 
+const make_cluster_call = async (data = []) => {
+    try {
+        if (!data.length) return;
+        
+        await fetch.post(``, { ...data.shift() });
+        setTimeout(() => {
+            make_cluster_call( data );
+        }, 1500);
+
+    } catch (e) {
+        console.log(`[Mock] Cluster gen error: ${e.message}`);
+    }
+}
+
+make_cluster_call(generated_data);
 
 // mongo_client.connect(url, async function (err, db) {
 //     if (err) {
@@ -54,9 +67,8 @@ users_in_batches.forEach((batch, batch_index) => {
 //         return
 //     }
 
-//     // generate location data
-
 //     const _db = db.db('Covik_QA');
+//     clear_and_populate_users(_db, users_from_file);
 // });
 
 // const clear_and_populate_users = (_db, list) => {
@@ -68,6 +80,6 @@ users_in_batches.forEach((batch, batch_index) => {
 //         }
 
 //         console.log(result, 'upload done.');
-//         db.close();
+//         _db.close();
 //     });
 // }

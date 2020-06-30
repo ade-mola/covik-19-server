@@ -67,7 +67,7 @@ class Tracker {
         const {userId, time, location} = clusterInfo;
         if (!userId || !time || !location) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
 
-        const user = await this.userControl.readOne({user_id:userId})
+        const user = await this.userControl.readOne({user_id: userId })
 
         if(!user.success) {
             Logger.info(`User with id: ${userId} does not exit`)

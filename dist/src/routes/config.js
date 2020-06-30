@@ -63,7 +63,7 @@ router.use(function (req, res, next) { return __awaiter(void 0, void 0, void 0, 
 }); });
 /** */
 router.use(function (req, res, next) {
-    console.log("[Route Config] Incoming request: " + req.method + " " + req.path);
+    console.log("[Route Config] Incoming request: " + req.method + " " + req.path + " " + req.ip);
     next();
 });
 router.use('/users', Users_1.default);
@@ -89,6 +89,7 @@ router.use(function (req, res, next) { return __awaiter(void 0, void 0, void 0, 
 }); });
 router.use(function (error, req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
+        console.log("[Route Config] general error: " + error.message);
         return [2 /*return*/, res.status(error.status || 500).send({
                 success: false,
                 error: {
