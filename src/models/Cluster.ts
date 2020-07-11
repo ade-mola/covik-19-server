@@ -11,7 +11,7 @@ import { processAlternatives } from './ModelHelper';
 const ClusterSchema: Schema = new Schema({
     location: {
         type: {
-            type: String,
+            type:String,
             enum: ['Point'],
             required: true
         },
@@ -20,10 +20,13 @@ const ClusterSchema: Schema = new Schema({
             required:true
         }
     },
+    time: {
+        type: Date,
+        required: true
+    },
     users: {
-        type: Object,
-        required: false,
-        default: {}, /** { <userId>: { time_joined, time_left } } */
+        type: Array,
+        required: false
     },
     is_active: {
         type: Boolean,
@@ -37,17 +40,16 @@ const ClusterSchema: Schema = new Schema({
     },
     createdAt: { 
         type: Date, 
-        required: true,
-        default: () => new Date(),
+        required: true, 
     }
 });
 
-ClusterSchema.index({ "location": "2dsphere" }, {"unique":true});
+ClusterSchema.index({ "location": "2dsphere" }, {"unique":false});
 
 const Cluster = exports = mongoose.model('Cluster', ClusterSchema);
 
 module.exports.createRecord = async (data: ICluster): Promise <any> => {
-    const new_record = new Cluster({ ...data });
+    const new_record = new Cluster({ ...data, createdAt: Date.now() });
     return await new_record.save();
 }
 
@@ -55,7 +57,7 @@ module.exports.readRecord = async (options: any, pagination?: IPagination): Prom
     return await Cluster.find({
         ...processAlternatives(options),
         is_active: true
-    });
+    }, null, pagination);
 }
 
 module.exports.updateRecord = async (options: any, data: ICluster): Promise <any> => {

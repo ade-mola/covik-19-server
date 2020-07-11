@@ -20,7 +20,6 @@ const UserSchema: Schema = new Schema({
     user_id: {
         type: String,
         required: true,
-        unique: true,
     },
     is_active: {
         type: Boolean,
@@ -54,7 +53,8 @@ module.exports.createRecord = async (data: IUser): Promise <any> => {
 module.exports.readRecord = async (options: any, pagination?: IPagination): Promise <any> => {
     return await User.find({
         ...processAlternatives(options),
-    });
+        is_active: true
+    }, null, pagination);
 }
 
 module.exports.updateRecord = async (options: any, data: IUser): Promise <any> => {

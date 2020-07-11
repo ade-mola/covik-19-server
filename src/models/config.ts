@@ -23,13 +23,9 @@ class CovikDatabase {
 
     connect(): void {
         this.mongoose.connect(this.database, {
-            useCreateIndex: true,
             useNewUrlParser: true,
             useUnifiedTopology: true,
             poolSize: 10
-        }).then( () => {
-            console.log(`[Mongoose] Db connected`)
-            // this.mongoose.model('User').find({user_id: '100'}, (e, d) => console.log(d));
         });
     }
 }
