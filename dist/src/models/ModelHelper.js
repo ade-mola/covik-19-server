@@ -14,6 +14,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.processAlternatives = void 0;
 exports.processAlternatives = function (fields) {
     var query = {};
     var orFields = __assign({}, fields);
