@@ -7,8 +7,8 @@ class Notification {
 
     }
 
-    async sendNotification(uniqueKeys: Array<string>) {
-        
+    async sendNotification(userId: string, uniqueKeys: Array<string>) {
+        console.log(userId, " => " ,uniqueKeys);
     }
 }
 
