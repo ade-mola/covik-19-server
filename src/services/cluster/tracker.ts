@@ -31,11 +31,9 @@ class Tracker {
         if (!userId) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
         if (!isPositive) return ResponseHelper.processSuccessfulResponse({});
 
-        const { baseTime, currentTime } = this.getTimeRange(checkInTime, 14);
-
+        const userDbKey = `users.${userId}`;
         const clusters = await this.clusterControl.readMany({
-            users: { $in: [userId] },
-            time: { $gte: baseTime, $lte: currentTime }
+            [userDbKey]: { $exists: true }
         });
 
         if (!clusters.success) {
@@ -43,7 +41,7 @@ class Tracker {
             return ResponseHelper.processFailedResponse(500, 'Something went wrong while processing test result');
         }
 
-        const ids: Array<string> = this.extracOtherUserIdsFromClusters(userId, clusters.payload);
+        const ids: Array<string> = this.extracOtherUserIdsFromClusters(userId, checkInTime, clusters.payload);
         const users = await this.userControl.readMany({ user_id: { $in: [...ids] } });
 
         if (!users.success) {
@@ -142,14 +140,23 @@ class Tracker {
         return { baseTime, currentTime };
     }
 
-    extracOtherUserIdsFromClusters(userId: string, payload: Array<ICluster>): Array<string> {
-        TODO: ' Change this from Array extraction to object extraction';
+    extracOtherUserIdsFromClusters(userId: string, checkInTime: string, payload: Array<ICluster>): Array<string> {
+        const { baseTime } = this.getTimeRange(checkInTime, 14);
         let combinedIds: Array<string> = [];
         payload.forEach(cluster => {
-            combinedIds = [...combinedIds, ...cluster.users];
+            const { timeJoined } = cluster.users[userId];
+            for (let id in cluster.users) {
+                const clusterUser = cluster.users[id];
+                if (timeJoined < baseTime) continue;
+                if (clusterUser.timeJoined < timeJoined && clusterUser.timeLeft < timeJoined) continue;
+                if (id == userId) continue;
+
+                //
+                combinedIds.push(id);
+            }
         });
 
-        return combinedIds.filter(id => userId !== id);
+        return combinedIds;
     }
 
     splitLocationData(location: string): any {
