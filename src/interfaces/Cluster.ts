@@ -1,9 +1,9 @@
 export interface ICluster {
     location: any;
-    users: any;
+    time: string;
+    users: Array<string>;
 }
 
-// incoming cluster data for particular user
 export interface IClusterInfo{
     userId:string,
     location: string,

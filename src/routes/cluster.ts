@@ -24,7 +24,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     }
 });
 
-router.post('/result', /*requireAuth,*/ celebrate({body: TestResultSchema}), async (req: Request, res: Response, next: NextFunction) => {
+router.post('/result', requireAuth, celebrate({body: TestResultSchema}), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const response = await ClusterTrackerService.processTestResult(req.body as ITestResult)
         if (response.success) res.status(200).send({ ...response})
@@ -34,7 +34,7 @@ router.post('/result', /*requireAuth,*/ celebrate({body: TestResultSchema}), asy
     }
 });
 
-router.post('/', /* requireAuth,*/ celebrate({body: NewClusterSchema}), async (req: Request, res: Response, next: NextFunction) => {
+router.post('/', requireAuth, celebrate({body: NewClusterSchema}), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const response = await ClusterTrackerService.createorUpdateCluster(req.body as IClusterInfo)
         if (response.success) res.status(200).send({ ...response})
