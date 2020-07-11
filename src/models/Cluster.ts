@@ -42,7 +42,7 @@ const ClusterSchema: Schema = new Schema({
     }
 });
 
-ClusterSchema.index({ "location": "2dsphere" }, {"unique":false});
+ClusterSchema.index({ "location": "2dsphere" }, {"unique":true});
 
 const Cluster = exports = mongoose.model('Cluster', ClusterSchema);
 
