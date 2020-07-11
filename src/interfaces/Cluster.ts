@@ -1,6 +1,6 @@
 export interface ICluster {
     location: any;
-    users: any;
+    users: Object;
 }
 
 // incoming cluster data for particular user
