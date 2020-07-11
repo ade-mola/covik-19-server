@@ -77,17 +77,18 @@ var Tracker = /** @class */ (function () {
      */
     Tracker.prototype.processTestResult = function (testResult) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, baseTime, currentTime, clusters, ids, users, uniqueKeys;
+            var userId, isPositive, checkInTime, _a, baseTime, currentTime, clusters, ids, users, uniqueKeys;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        if (!testResult.userId)
+                        userId = testResult.userId, isPositive = testResult.isPositive, checkInTime = testResult.checkInTime;
+                        if (!userId)
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid request data')];
-                        if (!testResult.isPositive)
+                        if (!isPositive)
                             return [2 /*return*/, Response_1.default.processSuccessfulResponse({})];
-                        _a = this.getTimeRange(testResult.checkInTime, 14), baseTime = _a.baseTime, currentTime = _a.currentTime;
+                        _a = this.getTimeRange(checkInTime, 14), baseTime = _a.baseTime, currentTime = _a.currentTime;
                         return [4 /*yield*/, this.clusterControl.readMany({
-                                users: { $in: testResult.userId },
+                                users: { $in: [userId] },
                                 time: { $gte: baseTime, $lte: currentTime }
                             })];
                     case 1:
@@ -96,8 +97,8 @@ var Tracker = /** @class */ (function () {
                             Logger_1.default.error(clusters.error.mesage);
                             return [2 /*return*/, Response_1.default.processFailedResponse(500, 'Something went wrong while processing test result')];
                         }
-                        ids = this.extracOtherUserIdsFromClusters(testResult.userId, clusters.payload);
-                        return [4 /*yield*/, this.userControl.readMany({ _id: { $in: __spreadArrays(ids) } })];
+                        ids = this.extracOtherUserIdsFromClusters(userId, clusters.payload);
+                        return [4 /*yield*/, this.userControl.readMany({ user_id: { $in: __spreadArrays(ids) } })];
                     case 2:
                         users = _b.sent();
                         if (!users.success) {
@@ -105,7 +106,7 @@ var Tracker = /** @class */ (function () {
                             return [2 /*return*/, Response_1.default.processSuccessfulResponse({})];
                         }
                         uniqueKeys = users.payload.map(function (user) { return user.user_id; });
-                        return [4 /*yield*/, notification_1.default.sendNotification(uniqueKeys)];
+                        return [4 /*yield*/, notification_1.default.sendNotification(userId, uniqueKeys)];
                     case 3:
                         _b.sent();
                         Logger_1.default.info("Notification was sent to users: " + uniqueKeys);
@@ -115,10 +116,9 @@ var Tracker = /** @class */ (function () {
         });
     };
     /**
-    * Process test result sent by the test centers.
-    *
-    * @param testResult
-    */
+     *
+     * @param clusterInfo
+     */
     Tracker.prototype.createorUpdateCluster = function (clusterInfo) {
         return __awaiter(this, void 0, void 0, function () {
             var userId, time, location, user, _a, longitude, latitude, _b, baseTime, currentTime, response, clusters;
@@ -159,7 +159,7 @@ var Tracker = /** @class */ (function () {
                         response = _c.sent();
                         if (response.success) {
                             //update those clusters
-                            Logger_1.default.info('Found a valid existing cluster. adding user id to the cluster');
+                            Logger_1.default.info("Found a valid existing cluster. adding user id " + userId + " to the cluster");
                             clusters = response.payload;
                             clusters.forEach(function (cluster) { return _this.updateCluster(userId, cluster); });
                             return [2 /*return*/, Response_1.default.processSuccessfulResponse(clusters.length + " clusters updated")];
@@ -191,7 +191,7 @@ var Tracker = /** @class */ (function () {
                             Logger_1.default.error(cluster.error.message);
                             return [2 /*return*/, Response_1.default.processFailedResponse(500, 'Something went wrong while trying to create new cluster')];
                         }
-                        Logger_1.default.info('New cluster created', newCluster);
+                        Logger_1.default.info("New cluster created for user ID: " + userId, newCluster);
                         return [2 /*return*/, Response_1.default.processSuccessfulResponse(__assign({}, newCluster))];
                 }
             });

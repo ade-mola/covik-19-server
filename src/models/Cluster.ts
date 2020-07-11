@@ -20,13 +20,10 @@ const ClusterSchema: Schema = new Schema({
             required:true
         }
     },
-    time: {
-        type: Date,
-        required: true
-    },
     users: {
-        type: Array,
-        required: false
+        type: Object,
+        required: false,
+        default: {}, /** { <userId>: { time_joined, time_left } } */
     },
     is_active: {
         type: Boolean,
@@ -40,7 +37,8 @@ const ClusterSchema: Schema = new Schema({
     },
     createdAt: { 
         type: Date, 
-        required: true, 
+        required: true,
+        default: () => new Date(),
     }
 });
 
@@ -49,7 +47,7 @@ ClusterSchema.index({ "location": "2dsphere" }, {"unique":false});
 const Cluster = exports = mongoose.model('Cluster', ClusterSchema);
 
 module.exports.createRecord = async (data: ICluster): Promise <any> => {
-    const new_record = new Cluster({ ...data, createdAt: Date.now() });
+    const new_record = new Cluster({ ...data });
     return await new_record.save();
 }
 
