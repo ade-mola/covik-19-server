@@ -26,31 +26,11 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -81,15 +61,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __spreadArrays = (this && this.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var Super_1 = __importDefault(require("./Super"));
@@ -119,14 +99,14 @@ var ClusterController = /** @class */ (function (_super) {
     };
     ClusterController.prototype.readOne = function (options) {
         return __awaiter(this, void 0, void 0, function () {
-            var records;
+            var record;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, this.model.readRecord(__assign({}, options))];
                     case 1:
-                        records = _a.sent();
-                        if (records[0])
-                            return [2 /*return*/, Response_1.default.processSuccessfulResponse(__assign({}, records[0]))];
+                        record = _a.sent();
+                        if (record[0])
+                            return [2 /*return*/, Response_1.default.processSuccessfulResponse(record['0'])];
                         return [2 /*return*/, Response_1.default.processFailedResponse(404, 'Resource not found')];
                 }
             });
@@ -143,7 +123,7 @@ var ClusterController = /** @class */ (function (_super) {
                     case 1:
                         records = _a.sent();
                         if (records.length)
-                            return [2 /*return*/, Response_1.default.processSuccessfulResponse(__spreadArrays(records))];
+                            return [2 /*return*/, Response_1.default.processSuccessfulResponse(records.slice())];
                         return [2 /*return*/, Response_1.default.processFailedResponse(404, 'Resource not found')];
                 }
             });
@@ -158,7 +138,7 @@ var ClusterController = /** @class */ (function (_super) {
                     case 1:
                         result = _a.sent();
                         if (result && result.nModified)
-                            return [2 /*return*/, Response_1.default.processSuccessfulResponse(__assign(__assign({}, options), data))];
+                            return [2 /*return*/, Response_1.default.processSuccessfulResponse(__assign({}, options, data))];
                         if (result && !result.nModified)
                             return [2 /*return*/, Response_1.default.processFailedResponse(406, 'No Change.')];
                         return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Resource not modified')];

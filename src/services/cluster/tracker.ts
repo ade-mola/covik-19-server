@@ -73,14 +73,15 @@ class Tracker {
 
         const { longitude, latitude } = this.splitLocationData(location);
 
-        const responseFromClusterQuery = await this.findCluseterWithLocation(longitude, longitude);
+        const responseFromClusterQuery = await this.findClusterWithLocation(longitude, latitude);
+
         if (responseFromClusterQuery.success) {
             const cluster = responseFromClusterQuery.payload;
-            if(cluster.users.get(userId)) {
+            if(cluster.users[userId]) {
                 Logger.info(`User ${userId} already exist in this same location lonitude:${longitude}, latitude:${latitude}. Updating their time_left`)
                 const update = `users.${userId}.time_left`
                 await cluster.updateOne({ '$set': { [update]: new Date(time)}});
-                return ResponseHelper.processSuccessfulResponse('1 clusters updated');
+                return ResponseHelper.processSuccessfulResponse('1 cluster updated');
             }
         }
 
@@ -114,7 +115,7 @@ class Tracker {
         return await this.createCluster(longitude, latitude, time, userId);
     }
 
-    async findCluseterWithLocation(longitude:number, latitude:number): Promise<IHttpResponse> {
+    async findClusterWithLocation(longitude: number, latitude:number): Promise<IHttpResponse> {
         
         const response = await this.clusterControl.readOne({
             location: {
@@ -123,7 +124,7 @@ class Tracker {
                         type: 'Point',
                         coordinates: [longitude, latitude]
                     },
-                    $maxDistance: 0, 
+                    $maxDistance: 3, //within 3m
                     $minDistance: 0
                 }
             }
@@ -137,7 +138,12 @@ class Tracker {
                 type: 'Point',
                 coordinates: [longitude, latitude]
             },
-            users: [userId]
+            users: {
+                [userId]: {
+                    time_joined: new Date(time),
+                    time_left: new Date(time)
+                }
+            }
         }
 
         const cluster = await this.clusterControl.create(newCluster)
