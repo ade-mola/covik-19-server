@@ -67,7 +67,10 @@ const generate_expected_data = (_db, expected_data, start = 0, end = 50, callbac
 
         data.on('data', (d) => {
             if (!expected_data[userId]) expected_data[userId] = {};
-            expected_data[userId] = extracOtherUserIdsFromClusters(userId, d);
+            expected_data[userId] = {
+                ...expected_data[userId],
+                ...extracOtherUserIdsFromClusters(userId, d)
+            };
         });
 
         data.on('end', () => {
