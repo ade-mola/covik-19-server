@@ -41,3 +41,30 @@ let edge_case = [
     'An uninfected person arrives before an infected person but leaves after the infected person arrives.',
     '',
 ]
+
+// let user_to_cluster = {
+//     [userId] : {
+//         [cluster1Id]: '',
+//         [cluster2Id]: '',
+//         [cluster3Id]: '',
+//     }
+//     // ...
+// }
+
+let user_to_cluster_user = {
+    [userId] : [  ]
+}
+
+// let cluster_to_cluster = {
+//     [cluster] : {
+//         [user1]: {
+//             time_joined,
+//             time_left
+//         },
+//         [user2]: {
+//             time_joined,
+//             time_left
+//         },
+//     },
+//     // ...
+// }
