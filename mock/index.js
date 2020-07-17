@@ -20,8 +20,8 @@ const {
 //const users = require('./users');
 
 const users_in_batches = generate_user_batches(users_from_file, 5);
-const min_time = Date.now() - (14 * 86400000);
-const max_time = Date.now();
+const min_time = Date.now() - (16 * 86400000);
+const max_time = Date.now() - (2 * 86400000);
 
 const generated_data = [];
 for ( let batch_index = 0; batch_index < 1; batch_index++) {
@@ -51,7 +51,6 @@ const make_cluster_call = async (data = [], i = 0) => {
         if (!data.length) return;
 
         const datum = data.shift();
-        console.log(datum)
         const { time } = datum;
         const new_time = Date.parse(time) + generate_random_integer(3600000, 86400000);
         await fetch.post(`http://localhost:8585/clusters`, { ...datum });
