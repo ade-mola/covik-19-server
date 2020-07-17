@@ -50,7 +50,12 @@ const make_cluster_call = async (data = [], i = 0) => {
     try {
         if (!data.length) return;
 
-        await fetch.post(`http://localhost:8585/clusters`, { ...data.shift() });
+        const datum = data.unshift();
+        const { time } = datum;
+        const new_time = Date.parse(time) + generate_random_integer(3600, 86400000);
+        await fetch.post(`http://localhost:8585/clusters`, { ...datum });
+        await fetch.post(`http://localhost:8585/clusters`, { ...datum, time: new Date(new_time) });
+        //
         setTimeout(() => {
             make_cluster_call( data );
         }, 200);
