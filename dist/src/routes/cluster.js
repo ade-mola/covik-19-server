@@ -106,8 +106,10 @@ router.post('/', /* requireAuth,*/ celebrate_1.celebrate({ body: Validation_1.Ne
                 response = _a.sent();
                 if (response.success)
                     res.status(200).send(__assign({}, response));
-                else
+                else {
+                    console.log(response);
                     res.status(response.error.code).send(__assign({}, response));
+                }
                 return [3 /*break*/, 3];
             case 2:
                 error_2 = _a.sent();

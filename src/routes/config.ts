@@ -49,6 +49,7 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.use(async (error: any, req: Request, res: Response, next: NextFunction) => {
+    console.log(error)
     console.log(`[Route Config] general error: ${error.message}`);
     return res.status(error.status || 500).send({
         success: false,

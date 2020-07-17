@@ -38,7 +38,10 @@ router.post('/', /* requireAuth,*/ celebrate({body: NewClusterSchema}), async (r
     try {
         const response = await ClusterTrackerService.createorUpdateCluster(req.body as IClusterInfo)
         if (response.success) res.status(200).send({ ...response})
-        else res.status(response.error.code).send({ ...response}) 
+        else {
+            console.log(response)
+            res.status(response.error.code).send({ ...response}) 
+        }
     } catch (error) {
         next(error);
     }
