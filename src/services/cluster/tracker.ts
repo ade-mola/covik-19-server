@@ -65,6 +65,9 @@ class Tracker {
         const { userId, time, location } = clusterInfo;
         if (!userId || !time || !location) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
 
+        const currentTime = new Date(Date.now())
+        if (new Date(Date.parse(time)) > currentTime) return ResponseHelper.processFailedResponse(400, 'Invalid date');
+
         const user = await this.userControl.readOne({ user_id: userId })
         if (!user.success) {
             Logger.info(`User with id: ${userId} does not exit`)
@@ -72,52 +75,43 @@ class Tracker {
         }
 
         const { longitude, latitude } = this.splitLocationData(location);
-
-        const responseFromClusterQuery = await this.findClusterWithLocation(longitude, latitude);
-
-        if (responseFromClusterQuery.success) {
-            const cluster = responseFromClusterQuery.payload;
-            if(cluster.users[userId]) {
-                Logger.info(`User ${userId} already exist in this same location lonitude:${longitude}, latitude:${latitude}. Updating their time_left`)
-                const update = `users.${userId}.time_left`
-                await cluster.updateOne({ '$set': { [update]: new Date(time)}});
-                return ResponseHelper.processSuccessfulResponse('1 cluster updated');
-            }
-        }
-
-        const { baseTime, currentTime } = this.getTimeRange(time, 5);
-
-        if (new Date(Date.parse(time)) > currentTime) return ResponseHelper.processFailedResponse(400, 'Invalid date');
-
         if (!longitude || !latitude) return ResponseHelper.processFailedResponse(400, 'Invalid formatted location data');
 
-        const response = await this.clusterControl.readMany({
-            location: {
-                $near: {
-                    $geometry: {
-                        type: 'Point',
-                        coordinates: [longitude, latitude]
-                    },
-                    $maxDistance: 3, //within 3m
-                    $minDistance: 0
-                }
-            }
-        });
+        const responseFromClusterQuery = await this.getClusterWithinRange(longitude, latitude);
+        let clusters:Array<any>
 
-        if (response.success) {
-            //update those clusters
-            Logger.info(`Found a valid existing cluster. adding user id ${userId} to the cluster`);
-            const clusters = response.payload as Array<any>
-            clusters.forEach(cluster => this.updateCluster(userId, time, cluster))
-            return ResponseHelper.processSuccessfulResponse(`${clusters.length} clusters updated`);
+        if (responseFromClusterQuery.success) {
+            
+            clusters = responseFromClusterQuery.payload;
+            const clusterWithSameLocation = clusters.find (each => {
+                const coordinates = each.location.coordinates;
+                return coordinates[0] == longitude && coordinates[1] == latitude
+            })
+
+            if( clusterWithSameLocation &&  clusterWithSameLocation.users[userId]) {
+                Logger.info(`User ${userId} already exist in this same location lonitude:${longitude}, latitude:${latitude}. Updating their time_left`)
+                const update = `users.${userId}.time_left`
+                await clusterWithSameLocation.updateOne({ '$set': { [update]: new Date(time)}});
+                return ResponseHelper.processSuccessfulResponse('1 cluster updated');
+            }
+
+             //update those clusters
+             Logger.info(`Found a valid existing cluster. adding user id ${userId} to the cluster`);
+             clusters.forEach(cluster => this.updateCluster(userId, time, cluster))
+
+            if(!!!clusterWithSameLocation) {
+                Logger.info(`Found existing clusters for user ${userId} but exact location longitude: ${longitude} and latitude:${latitude} does not exit yet. creating extra cluster with the location`)
+                return await this.createCluster(longitude, latitude, time, userId);
+            }
+             return ResponseHelper.processSuccessfulResponse(`${clusters.length} clusters updated`);
         }
 
         return await this.createCluster(longitude, latitude, time, userId);
     }
 
-    async findClusterWithLocation(longitude: number, latitude:number): Promise<IHttpResponse> {
+    async getClusterWithinRange(longitude: number, latitude:number): Promise<IHttpResponse> {
         
-        const response = await this.clusterControl.readOne({
+        const response = await this.clusterControl.readMany({
             location: {
                 $near: {
                     $geometry: {
@@ -131,6 +125,7 @@ class Tracker {
         });
         return response;
     }
+
     async createCluster(longitude: number, latitude: number, time: string, userId: string): Promise<IHttpResponse> {
 
         const newCluster: ICluster = {
