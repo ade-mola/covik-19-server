@@ -112,73 +112,64 @@ var Tracker = /** @class */ (function () {
      */
     Tracker.prototype.createorUpdateCluster = function (clusterInfo) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, userId, time, location, user, _b, longitude, latitude, responseFromClusterQuery, cluster, update, _c, baseTime, currentTime, response, clusters;
+            var _a, userId, time, location, currentTime, user, _b, longitude, latitude, responseFromClusterQuery, clusters, clusterWithSameLocation, update;
             var _this = this;
-            return __generator(this, function (_d) {
-                switch (_d.label) {
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         userId = clusterInfo.userId, time = clusterInfo.time, location = clusterInfo.location;
                         if (!userId || !time || !location)
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid request data')];
+                        currentTime = new Date(Date.now());
+                        if (new Date(Date.parse(time)) > currentTime)
+                            return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid date')];
                         return [4 /*yield*/, this.userControl.readOne({ user_id: userId })];
                     case 1:
-                        user = _d.sent();
+                        user = _c.sent();
                         if (!user.success) {
                             Logger_1.default.info("User with id: " + userId + " does not exit");
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid user')];
                         }
                         _b = this.splitLocationData(location), longitude = _b.longitude, latitude = _b.latitude;
-                        return [4 /*yield*/, this.findClusterWithLocation(longitude, latitude)];
-                    case 2:
-                        responseFromClusterQuery = _d.sent();
-                        if (!responseFromClusterQuery.success) return [3 /*break*/, 4];
-                        cluster = responseFromClusterQuery.payload;
-                        if (!cluster.users[userId]) return [3 /*break*/, 4];
-                        Logger_1.default.info("User " + userId + " already exist in this same location lonitude:" + longitude + ", latitude:" + latitude + ". Updating their time_left");
-                        update = "users." + userId + ".time_left";
-                        return [4 /*yield*/, cluster.updateOne({ '$set': (_a = {}, _a[update] = new Date(time), _a) })];
-                    case 3:
-                        _d.sent();
-                        return [2 /*return*/, Response_1.default.processSuccessfulResponse('1 cluster updated')];
-                    case 4:
-                        _c = this.getTimeRange(time, 5), baseTime = _c.baseTime, currentTime = _c.currentTime;
-                        if (new Date(Date.parse(time)) > currentTime)
-                            return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid date')];
                         if (!longitude || !latitude)
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid formatted location data')];
-                        return [4 /*yield*/, this.clusterControl.readMany({
-                                location: {
-                                    $near: {
-                                        $geometry: {
-                                            type: 'Point',
-                                            coordinates: [longitude, latitude]
-                                        },
-                                        $maxDistance: 3,
-                                        $minDistance: 0
-                                    }
-                                }
-                            })];
-                    case 5:
-                        response = _d.sent();
-                        if (response.success) {
-                            //update those clusters
-                            Logger_1.default.info("Found a valid existing cluster. adding user id " + userId + " to the cluster");
-                            clusters = response.payload;
-                            clusters.forEach(function (cluster) { return _this.updateCluster(userId, time, cluster); });
-                            return [2 /*return*/, Response_1.default.processSuccessfulResponse(clusters.length + " clusters updated")];
-                        }
+                        return [4 /*yield*/, this.getClusterWithinRange(longitude, latitude)];
+                    case 2:
+                        responseFromClusterQuery = _c.sent();
+                        if (!responseFromClusterQuery.success) return [3 /*break*/, 7];
+                        clusters = responseFromClusterQuery.payload;
+                        clusterWithSameLocation = clusters.find(function (each) {
+                            var coordinates = each.location.coordinates;
+                            return coordinates[0] == longitude && coordinates[1] == latitude;
+                        });
+                        if (!(clusterWithSameLocation && clusterWithSameLocation.users[userId])) return [3 /*break*/, 4];
+                        Logger_1.default.info("User " + userId + " already exist in this same location lonitude:" + longitude + ", latitude:" + latitude + ". Updating their time_left");
+                        update = "users." + userId + ".time_left";
+                        return [4 /*yield*/, clusterWithSameLocation.updateOne({ '$set': (_a = {}, _a[update] = new Date(time), _a) })];
+                    case 3:
+                        _c.sent();
+                        return [2 /*return*/, Response_1.default.processSuccessfulResponse('1 cluster updated')];
+                    case 4:
+                        //update those clusters
+                        Logger_1.default.info("Found a valid existing cluster. adding user id " + userId + " to the cluster");
+                        clusters.forEach(function (cluster) { return _this.updateCluster(userId, time, cluster); });
+                        if (!!!!clusterWithSameLocation) return [3 /*break*/, 6];
+                        Logger_1.default.info("Found existing clusters for user " + userId + " but exact location longitude: " + longitude + " and latitude:" + latitude + " does not exit yet. creating extra cluster with the location");
                         return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
-                    case 6: return [2 /*return*/, _d.sent()];
+                    case 5: return [2 /*return*/, _c.sent()];
+                    case 6: return [2 /*return*/, Response_1.default.processSuccessfulResponse(clusters.length + " clusters updated")];
+                    case 7: return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
+                    case 8: return [2 /*return*/, _c.sent()];
                 }
             });
         });
     };
-    Tracker.prototype.findClusterWithLocation = function (longitude, latitude) {
+    Tracker.prototype.getClusterWithinRange = function (longitude, latitude) {
         return __awaiter(this, void 0, void 0, function () {
             var response;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, this.clusterControl.readOne({
+                    case 0: return [4 /*yield*/, this.clusterControl.readMany({
                             location: {
                                 $near: {
                                     $geometry: {
