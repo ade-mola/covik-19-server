@@ -54,9 +54,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 **/
 var Cluster_1 = __importDefault(require("../../controllers/Cluster"));
 var User_1 = __importDefault(require("../../controllers/User"));
-var notification_1 = __importDefault(require("../notification/notification"));
 var Response_1 = __importDefault(require("../../utilities/Response"));
 var Logger_1 = __importDefault(require("../../utilities/Logger"));
+var patient_clusters_1 = __importDefault(require("../patient-tracking/patient-clusters"));
 var Tracker = /** @class */ (function () {
     function Tracker() {
         this.clusterControl = Cluster_1.default;
@@ -69,39 +69,42 @@ var Tracker = /** @class */ (function () {
      */
     Tracker.prototype.processTestResult = function (testResult) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, userId, isPositive, checkInTime, userDbKey, clusters, ids, users, uniqueKeys;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var userId, isPositive, checkInTime, infectionTracker, cases;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
                     case 0:
                         userId = testResult.userId, isPositive = testResult.isPositive, checkInTime = testResult.checkInTime;
                         if (!userId)
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid request data')];
                         if (!isPositive)
                             return [2 /*return*/, Response_1.default.processSuccessfulResponse({})];
-                        userDbKey = "users." + userId;
-                        return [4 /*yield*/, this.clusterControl.readMany((_a = {},
-                                _a[userDbKey] = { $exists: true },
-                                _a))];
+                        infectionTracker = new patient_clusters_1.default(userId);
+                        return [4 /*yield*/, infectionTracker.getListOfPossibleCasesForGivenUser(userId, checkInTime, true)];
                     case 1:
-                        clusters = _b.sent();
-                        if (!clusters.success) {
-                            Logger_1.default.error(clusters.error.mesage);
-                            return [2 /*return*/, Response_1.default.processFailedResponse(500, 'Something went wrong while processing test result')];
-                        }
-                        ids = this.extracOtherUserIdsFromClusters(userId, checkInTime, clusters.payload);
-                        return [4 /*yield*/, this.userControl.readMany({ user_id: { $in: ids.slice() } })];
-                    case 2:
-                        users = _b.sent();
-                        if (!users.success) {
-                            Logger_1.default.error(users.error.message);
-                            return [2 /*return*/, Response_1.default.processSuccessfulResponse({})];
-                        }
-                        uniqueKeys = users.payload.map(function (user) { return user.user_id; });
-                        return [4 /*yield*/, notification_1.default.sendNotification(userId, uniqueKeys)];
-                    case 3:
-                        _b.sent();
-                        Logger_1.default.info("Notification was sent to users: " + uniqueKeys);
-                        return [2 /*return*/, Response_1.default.processSuccessfulResponse({})];
+                        _a.sent();
+                        cases = [];
+                        infectionTracker.possibleCases.forEach(function (v, k) { return cases.push(k); });
+                        // const userDbKey = `users.${userId}`;
+                        // const clusters = await this.clusterControl.readMany({
+                        //     [userDbKey]: { $exists: true }
+                        // });
+                        // if (!clusters.success) {
+                        //     Logger.error(clusters.error.mesage);
+                        //     return ResponseHelper.processFailedResponse(500, 'Something went wrong while processing test result');
+                        // }
+                        // const ids: Array<string> = this.extracOtherUserIdsFromClusters(userId, checkInTime, clusters.payload);
+                        // const users = await this.userControl.readMany({ user_id: { $in: [...ids] } });
+                        // if (!users.success) {
+                        //     Logger.error(users.error.message);
+                        //     return ResponseHelper.processSuccessfulResponse({});
+                        // }
+                        // const uniqueKeys: Array<string> = users.payload.map((user: IUser) => user.user_id);
+                        // await NotificationService.sendNotification(userId, uniqueKeys);
+                        // Logger.info(`Notification was sent to users: ${uniqueKeys}`)
+                        return [2 /*return*/, Response_1.default.processSuccessfulResponse({
+                                userId: userId,
+                                cases: cases,
+                            })];
                 }
             });
         });

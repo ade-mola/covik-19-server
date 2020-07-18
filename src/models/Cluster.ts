@@ -54,21 +54,21 @@ module.exports.createRecord = async (data: ICluster): Promise <any> => {
 module.exports.readRecord = async (options: any, pagination?: IPagination): Promise <any> => {
     return await Cluster.find({
         ...processAlternatives(options),
-        is_active: true
+        // is_active: true
     });
 }
 
 module.exports.updateRecord = async (options: any, data: ICluster): Promise <any> => {
     return await Cluster.update({
         ...processAlternatives(options),
-        is_active: true
+        // is_active: true
     }, { ...data });
 }
 
 module.exports.deleteRecord = async (options: any) => {
     return await Cluster.update({
         ...processAlternatives(options),
-        is_active: true
+        // is_active: true
     }, {
         is_active: false,
         is_deleted: true

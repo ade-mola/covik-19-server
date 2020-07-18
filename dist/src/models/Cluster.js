@@ -108,7 +108,7 @@ module.exports.createRecord = function (data) { return __awaiter(_this, void 0, 
 module.exports.readRecord = function (options, pagination) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Cluster.find(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }))];
+            case 0: return [4 /*yield*/, Cluster.find(__assign({}, ModelHelper_1.processAlternatives(options)))];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
@@ -116,7 +116,7 @@ module.exports.readRecord = function (options, pagination) { return __awaiter(_t
 module.exports.updateRecord = function (options, data) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Cluster.update(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), __assign({}, data))];
+            case 0: return [4 /*yield*/, Cluster.update(__assign({}, ModelHelper_1.processAlternatives(options)), __assign({}, data))];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
@@ -124,7 +124,7 @@ module.exports.updateRecord = function (options, data) { return __awaiter(_this,
 module.exports.deleteRecord = function (options) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, Cluster.update(__assign({}, ModelHelper_1.processAlternatives(options), { is_active: true }), {
+            case 0: return [4 /*yield*/, Cluster.update(__assign({}, ModelHelper_1.processAlternatives(options)), {
                     is_active: false,
                     is_deleted: true
                 })];

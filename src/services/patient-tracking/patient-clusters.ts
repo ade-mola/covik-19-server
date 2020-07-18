@@ -2,7 +2,7 @@
  * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
  */
 import { ICluster } from "../../interfaces/Cluster";
-const ClusterController = require('../../controllers/Cluster');
+import ClusterController from '../../controllers/Cluster';
 
 class PatientCluster {
     //
@@ -20,23 +20,35 @@ class PatientCluster {
         if ((userId == this.patientId) && !isStart) return;
 
         this.visitedCases.set(userId, true); // mark user as visited.
-        const clusters: Array<ICluster> = await ClusterController.readMany({
-            [`users.${userId}`]: { timeJoined: { $gte: baseTime } },
-        });
+        const clusters: Array<ICluster> = (await ClusterController.readMany({
+            [`users.${userId}.time_joined`]: { $gte: new Date(baseTime) },
+        })).payload || [];
 
-        const users = clusters.reduce((all_users: any, cluster) => {
-            return [ ...all_users, ...cluster.users ];
-        }, []);
+        const user_time_in_cluster: Map<string, any> = new Map;
+        clusters.forEach((cluster: any) => {
+            for (let uid in cluster.users) {
+                if (userId == uid) {
+                    const user_cluster_data = cluster.users[uid];
+                    user_time_in_cluster.set(cluster._id, [user_cluster_data.time_joined, user_cluster_data.time_left]);
+                }
+            }
+        })
 
-        //
-        users.forEach(async (user: any) => {
-            if (user.timeLeft >= baseTime) {
-                this.possibleCases.set(user, true);
-                await this.getListOfPossibleCasesForGivenUser(user.userId, user.timeLeft);
+
+        clusters.forEach(async (cluster: any) => {
+            const min_time = (user_time_in_cluster.get(cluster._id))[0];
+            const max_time = (user_time_in_cluster.get(cluster._id))[1];
+
+
+            for (let uid in cluster.users) {
+                const user = cluster.users[uid];
+                if (uid == userId) continue;
+                if ((user.time_joined >= min_time && user.time_joined <= max_time) || (min_time >= user.time_joined && min_time <= user.time_left)) {
+                    this.possibleCases.set(uid, true);
+                    await this.getListOfPossibleCasesForGivenUser(user.userId, user.time_left);
+                }
             }
         });
-
-        //
         return;
     }
 }
