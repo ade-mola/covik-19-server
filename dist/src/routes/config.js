@@ -3,10 +3,11 @@
  * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
 */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -40,7 +41,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var path_1 = __importDefault(require("path"));
@@ -49,8 +49,9 @@ var Users_1 = __importDefault(require("./Users"));
 var cluster_1 = __importDefault(require("./cluster"));
 /** CONFIG */
 var router = express_1.default.Router();
-router.use(function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.use(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
+        console.log("[Incoming request] " + req.method + " " + req.url);
         req.headers["access-control-allow-origin"] = '*';
         req.headers["access-control-allow-headers"] = '*';
         if (req.method === 'OPTIONS') {
@@ -69,14 +70,14 @@ router.use(function (req, res, next) {
 router.use('/users', Users_1.default);
 router.use('/clusters', cluster_1.default);
 /** STATIC HANDLERS */
-router.use('/images/image/:image_uri', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+router.use('/images/image/:image_uri', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         res.sendFile(path_1.default.resolve(__dirname, "../../public/images/" + req.params.image_uri));
         return [2 /*return*/];
     });
 }); });
 /**  EXCEPTIONS */
-router.use(function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.use(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var error;
     return __generator(this, function (_a) {
         error = {
@@ -87,9 +88,8 @@ router.use(function (req, res, next) { return __awaiter(_this, void 0, void 0, f
         return [2 /*return*/];
     });
 }); });
-router.use(function (error, req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.use(function (error, req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        console.log(error);
         console.log("[Route Config] general error: " + error.message);
         return [2 /*return*/, res.status(error.status || 500).send({
                 success: false,

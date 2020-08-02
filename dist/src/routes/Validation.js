@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.TestResultSchema = exports.NewClusterSchema = exports.EmailSchema = exports.TokenSchema = exports.UserSchema = void 0;
 var celebrate_1 = require("celebrate");
 exports.UserSchema = celebrate_1.Joi.object().keys({
     email: celebrate_1.Joi.string().required().email(),
