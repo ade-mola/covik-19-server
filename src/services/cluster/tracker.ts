@@ -9,10 +9,11 @@ import ResponseHelper from '../../utilities/Response';
 import { ITestResult } from '../../interfaces/TestResult';
 import { IHttpResponse } from '../../interfaces/HTTPRepsonse';
 import { ICluster, IClusterInfo } from '../../interfaces/Cluster';
-import { IUser } from '../../interfaces/User';
 import Logger from '../../utilities/Logger';
 
 import InfectionTracker from '../patient-tracking/patient-clusters';
+
+var clusterQueue: Array<IClusterInfo> = []
 
 class Tracker {
     private clusterControl: any;
@@ -38,7 +39,6 @@ class Tracker {
         
         let cases: Array<any> = [];
         infectionTracker.possibleCases.forEach((v, k) => cases.push(k));
-
 
         // const userDbKey = `users.${userId}`;
         // const clusters = await this.clusterControl.readMany({
@@ -66,6 +66,18 @@ class Tracker {
             userId,
             cases,
         });
+    }
+
+
+   async addAndProcessClusterQueue(clusters: Array<IClusterInfo>) {
+        clusterQueue.push(...clusters);
+        this.processClusterQueue()
+    }
+
+    async processClusterQueue() {
+        while (clusterQueue.length) {
+            this.createorUpdateCluster(clusterQueue.shift() as IClusterInfo)
+        }
     }
 
     /**

@@ -22,6 +22,11 @@ const UserSchema: Schema = new Schema({
         required: true,
         unique: true,
     },
+    notification_token: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     is_active: {
         type: Boolean,
         required: true,
