@@ -6,7 +6,7 @@ export interface IUser {
     email: string;
     password: string;
     user_id: string;
-    notification_token:string,
+    notification_token?:string,
     is_active?: boolean;
     is_deleted?: boolean
     is_verified?: boolean
@@ -15,5 +15,5 @@ export interface IUser {
 export interface IUserInputDTO {
     email: string;
     password: string;
-    notification_token:string,
+    notification_token?:string,
   }

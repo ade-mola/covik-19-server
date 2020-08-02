@@ -55,9 +55,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 **/
 var Cluster_1 = __importDefault(require("../../controllers/Cluster"));
 var User_1 = __importDefault(require("../../controllers/User"));
+var notification_1 = __importDefault(require("../notification/notification"));
 var Response_1 = __importDefault(require("../../utilities/Response"));
 var Logger_1 = __importDefault(require("../../utilities/Logger"));
 var patient_clusters_1 = __importDefault(require("../patient-tracking/patient-clusters"));
+var clusterQueue = [];
 var Tracker = /** @class */ (function () {
     function Tracker() {
         this.clusterControl = Cluster_1.default;
@@ -70,7 +72,7 @@ var Tracker = /** @class */ (function () {
      */
     Tracker.prototype.processTestResult = function (testResult) {
         return __awaiter(this, void 0, void 0, function () {
-            var userId, isPositive, checkInTime, infectionTracker, cases;
+            var userId, isPositive, checkInTime, infectionTracker, cases, infectedUsers, tokens;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -85,28 +87,36 @@ var Tracker = /** @class */ (function () {
                         _a.sent();
                         cases = [];
                         infectionTracker.possibleCases.forEach(function (v, k) { return cases.push(k); });
-                        // const userDbKey = `users.${userId}`;
-                        // const clusters = await this.clusterControl.readMany({
-                        //     [userDbKey]: { $exists: true }
-                        // });
-                        // if (!clusters.success) {
-                        //     Logger.error(clusters.error.mesage);
-                        //     return ResponseHelper.processFailedResponse(500, 'Something went wrong while processing test result');
-                        // }
-                        // const ids: Array<string> = this.extracOtherUserIdsFromClusters(userId, checkInTime, clusters.payload);
-                        // const users = await this.userControl.readMany({ user_id: { $in: [...ids] } });
-                        // if (!users.success) {
-                        //     Logger.error(users.error.message);
-                        //     return ResponseHelper.processSuccessfulResponse({});
-                        // }
-                        // const uniqueKeys: Array<string> = users.payload.map((user: IUser) => user.user_id);
-                        // await NotificationService.sendNotification(userId, uniqueKeys);
-                        // Logger.info(`Notification was sent to users: ${uniqueKeys}`)
+                        return [4 /*yield*/, User_1.default.readMany({ user_id: cases.join() })];
+                    case 2:
+                        infectedUsers = _a.sent();
+                        tokens = infectedUsers.payload.map(function (e) { return e.token; });
+                        notification_1.default.sendNotification(userId, tokens);
+                        //
                         return [2 /*return*/, Response_1.default.processSuccessfulResponse({
                                 userId: userId,
                                 cases: cases,
                             })];
                 }
+            });
+        });
+    };
+    Tracker.prototype.addAndProcessClusterQueue = function (clusters) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                clusterQueue.push.apply(clusterQueue, clusters);
+                this.processClusterQueue();
+                return [2 /*return*/];
+            });
+        });
+    };
+    Tracker.prototype.processClusterQueue = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                while (clusterQueue.length) {
+                    this.createorUpdateCluster(clusterQueue.shift());
+                }
+                return [2 /*return*/];
             });
         });
     };

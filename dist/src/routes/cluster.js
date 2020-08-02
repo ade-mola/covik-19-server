@@ -96,28 +96,28 @@ router.post('/result', auth_1.requireAuth, celebrate_1.celebrate({ body: Validat
         }
     });
 }); });
-router.post('/', auth_1.requireAuth, celebrate_1.celebrate({ body: Validation_1.NewClusterSchema }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
-    var response, error_2;
+router.post('/', /* requireAuth,*/ celebrate_1.celebrate({ body: [Validation_1.NewClusterSchema] }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, tracker_1.default.createorUpdateCluster(req.body)];
-            case 1:
-                response = _a.sent();
-                if (response.success)
-                    res.status(200).send(__assign({}, response));
-                else {
-                    console.log(response);
-                    res.status(response.error.code).send(__assign({}, response));
-                }
-                return [3 /*break*/, 3];
-            case 2:
-                error_2 = _a.sent();
-                next(error_2);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+        try {
+            tracker_1.default.addAndProcessClusterQueue(req.body);
+            res.send("request sucessfully enqueued to be processed");
         }
+        catch (error) {
+            next(error);
+        }
+        return [2 /*return*/];
     });
 }); });
+// router.post('/', /* requireAuth,*/ celebrate({body: NewClusterSchema}), async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const response = await ClusterTrackerService.createorUpdateCluster(req.body as IClusterInfo)
+//         if (response.success) res.status(200).send({ ...response})
+//         else {
+//             console.log(response)
+//             res.status(response.error.code).send({ ...response}) 
+//         }
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 exports.default = router;

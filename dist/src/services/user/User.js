@@ -1,23 +1,7 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+/**
+ * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
+*/
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -54,33 +38,52 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
-*/
-var firebase = __importStar(require("firebase-admin"));
-var Notification = /** @class */ (function () {
-    function Notification() {
-        firebase.initializeApp({
-            credential: firebase.credential.applicationDefault(),
-            databaseURL: "",
-        });
+var User_1 = __importDefault(require("../../controllers/User"));
+var Response_1 = __importDefault(require("../../utilities/Response"));
+var Logger_1 = __importDefault(require("../../utilities/Logger"));
+// Write Heavy Logic in services
+var UserService = /** @class */ (function () {
+    function UserService() {
+        this.userControl = User_1.default;
     }
-    Notification.prototype.sendNotification = function (userId, uniqueKeys) {
+    UserService.prototype.sampleRequestHandler = function (request) {
         return __awaiter(this, void 0, void 0, function () {
-            var n, i;
             return __generator(this, function (_a) {
-                n = Math.ceil(uniqueKeys.length / 500);
-                for (i = 0; i < n; i++) {
-                    firebase.messaging().sendMulticast({
-                        data: {},
-                        tokens: uniqueKeys.splice((n * 500), 500),
-                    }).then(function (response) { return console.log(response); });
+                try {
+                    return [2 /*return*/, Response_1.default.processFailedResponse(404, 'Resource Not Found')];
+                }
+                catch (e) {
+                    console.log("[UserService] inHouseMethod Error: " + e.message);
                 }
                 return [2 /*return*/];
             });
         });
     };
-    return Notification;
+    UserService.prototype.updateUserNotificationToken = function (userId, notificationToken) {
+        return __awaiter(this, void 0, void 0, function () {
+            var user;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!userId || !notificationToken)
+                            return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid request data')];
+                        return [4 /*yield*/, this.userControl.readOne({ user_id: userId })];
+                    case 1:
+                        user = _a.sent();
+                        if (!user.success) {
+                            Logger_1.default.info("User with id: " + userId + " does not exit");
+                            return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid user')];
+                        }
+                        return [4 /*yield*/, this.userControl.update({ notificationToken: notificationToken }, user.payload)];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    return UserService;
 }());
-exports.default = new Notification;
+exports.default = new UserService; // or new UserService
