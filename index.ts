@@ -16,8 +16,7 @@ import compression from 'compression';
 import cors from 'cors';
 import file_upload from 'express-fileupload';
 import helmet from 'helmet';
-
-//
+ 
 const app: Application = express();
 
 app.use(express.static('public'));
