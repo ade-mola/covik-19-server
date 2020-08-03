@@ -51,7 +51,6 @@ var body_parser_1 = __importDefault(require("body-parser"));
 var compression_1 = __importDefault(require("compression"));
 var cors_1 = __importDefault(require("cors"));
 var helmet_1 = __importDefault(require("helmet"));
-//
 var app = express_1.default();
 app.use(express_1.default.static('public'));
 app.use(compression_1.default());
