@@ -133,7 +133,7 @@ module.exports.readRecord = function (options, pagination) { return __awaiter(vo
 module.exports.updateRecord = function (options, data) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, User.update(__assign(__assign({}, ModelHelper_1.processAlternatives(options)), { is_active: true }), __assign({}, data))];
+            case 0: return [4 /*yield*/, User.updateMany(__assign(__assign({}, ModelHelper_1.processAlternatives(options)), { is_active: true }), data)];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
@@ -141,7 +141,7 @@ module.exports.updateRecord = function (options, data) { return __awaiter(void 0
 module.exports.deleteRecord = function (options) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, User.update(__assign(__assign({}, ModelHelper_1.processAlternatives(options)), { is_active: true }), {
+            case 0: return [4 /*yield*/, User.updateMany(__assign(__assign({}, ModelHelper_1.processAlternatives(options)), { is_active: true }), {
                     is_active: false,
                     is_deleted: true
                 })];

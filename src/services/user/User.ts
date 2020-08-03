@@ -11,8 +11,8 @@ import { IHttpResponse } from '../../interfaces/HTTPRepsonse';
 // Write Heavy Logic in services
 class UserService {
     private userControl: any;
-    
-    constructor() { 
+
+    constructor() {
         this.userControl = UserController
     }
 
@@ -27,13 +27,13 @@ class UserService {
     async updateUserNotificationToken(userId: string, notificationToken: string): Promise<IHttpResponse> {
         if (!userId || !notificationToken) return ResponseUtility.processFailedResponse(400, 'Invalid request data');
 
-        const user = await this.userControl.readOne({ user_id: userId })
+        const user = await this.userControl.readOne({ user_id: userId });
         if (!user.success) {
             Logger.info(`User with id: ${userId} does not exit`)
             return ResponseUtility.processFailedResponse(400, 'Invalid user');
         }
 
-        return await this.userControl.update({notificationToken}, user.payload as IUser);
+        return await this.userControl.update({ user_id: userId }, { ...this.userControl.jsonize(user.payload), notificationToken });
     }
 }
 
