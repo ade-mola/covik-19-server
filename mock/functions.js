@@ -1,12 +1,12 @@
 /** */
 
-module.exports.generate_random_integer = (min, max) => {
+module.exports = generate_random_integer = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-module.exports.generate_user_batches = (data = [], num_of_batches = 1) => {
+module.exports = generate_user_batches = (data = [], num_of_batches = 1) => {
     let user_batches = [];
     const population = Math.ceil(data.length / num_of_batches);
 
@@ -20,7 +20,7 @@ module.exports.generate_user_batches = (data = [], num_of_batches = 1) => {
     return user_batches;
 }
 
-module.exports.generate_cluster_data = (user_batch = [], location_batch = [], cluster = [], i = 0) => {
+module.exports = generate_cluster_data = (user_batch = [], location_batch = [], cluster = [], i = 0) => {
     const limit = user_batch.length * location_batch.length;
     if ( i >= limit ) return cluster;
 
@@ -43,7 +43,7 @@ module.exports.generate_cluster_data = (user_batch = [], location_batch = [], cl
     generate_cluster_data(user_batch, location_batch, cluster, (i + 1));
 }
 
-module.exports.generate_random_users = (users = []) => {
+module.exports = generate_random_users = (users = []) => {
     const iterations = generate_random_integer(0, users.length - 1);
     let random_users = [];
     for (let i = 0; i < iterations; i++) {

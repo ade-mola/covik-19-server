@@ -30,9 +30,10 @@ class Tracker {
      * @param testResult
      */
     async processTestResult(testResult: ITestResult): Promise<IHttpResponse> {
-        const { userId, isPositive, checkInTime } = testResult;
-        if (!userId) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
-        if (!isPositive) return ResponseHelper.processSuccessfulResponse({});
+        if (!testResult.userId) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
+        if (!testResult.isPositive) return ResponseHelper.processSuccessfulResponse({});
+
+        const { baseTime, currentTime } = this.getTimeRange(testResult.checkInTime, 14);
 
         const infectionTracker = new InfectionTracker(userId);
         await infectionTracker.getListOfPossibleCasesForGivenUser(userId, checkInTime, true);
@@ -63,13 +64,14 @@ class Tracker {
         }
     }
 
-    /**
+     /**
+     * Process test result sent by the test centers.
      * 
-     * @param clusterInfo 
+     * @param testResult
      */
     async createorUpdateCluster(clusterInfo: IClusterInfo): Promise<IHttpResponse> {
 
-        const { userId, time, location } = clusterInfo;
+        const {userId, time, location} = clusterInfo;
         if (!userId || !time || !location) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
 
         const currentTime = new Date(Date.now())
@@ -121,24 +123,24 @@ class Tracker {
         const response = await this.clusterControl.readMany({
             location: {
                 $near: {
-                    $geometry: {
-                        type: 'Point',
-                        coordinates: [longitude, latitude]
-                    },
-                    $maxDistance: 3, //within 3m
-                    $minDistance: 0
+                  $geometry: {
+                     type: 'Point' ,
+                     coordinates: [ longitude, latitude ]
+                  },
+                  $maxDistance: 3, //within 3m
+                  $minDistance: 0
                 }
             }
         });
         return response;
     }
 
-    async createCluster(longitude: number, latitude: number, time: string, userId: string): Promise<IHttpResponse> {
-
-        const newCluster: ICluster = {
+    async createCluster(longitude:number, latitude: number, time:string, userId: string): Promise<IHttpResponse> {
+        
+        const newCluster : ICluster = {
             location: {
                 type: 'Point',
-                coordinates: [longitude, latitude]
+                coordinates: [ longitude, latitude]
             },
             users: {
                 [userId]: {
@@ -150,14 +152,14 @@ class Tracker {
 
         const cluster = await this.clusterControl.create(newCluster)
 
-        if (!cluster.success) {
+        if(!cluster.success) { 
             Logger.error(cluster.error.message);
             return ResponseHelper.processFailedResponse(500, 'Something went wrong while trying to create new cluster');
         }
 
-        Logger.info(`New cluster created for user ID: ${userId}`, newCluster)
-        return ResponseHelper.processSuccessfulResponse({ ...newCluster });
-    }
+        Logger.info('New cluster created', newCluster)
+        return ResponseHelper.processSuccessfulResponse({ ...newCluster});
+     }
 
     async updateCluster(userId: string, time: string, cluster: any) {
         const details = {
@@ -172,37 +174,27 @@ class Tracker {
      * Get time range
      * @param checkInTime time the user checks in for the test.
      */
-    getTimeRange(checkInTime: string, days: number): any {
+    getTimeRange(checkInTime: string, days: number):any {
         const currentTime: Date = new Date(Date.now());
-        const baseTime: Date = new Date(Date.parse(checkInTime) - (days * 3600 * 24 * 1000));
+        const baseTime: Date =  new Date (Date.parse(checkInTime) - (days * 3600 * 24  * 1000));
 
         return { baseTime, currentTime };
     }
 
-    extracOtherUserIdsFromClusters(userId: string, checkInTime: string, payload: Array<ICluster>): Array<string> {
-        const { baseTime } = this.getTimeRange(checkInTime, 14);
+    extracOtherUserIdsFromClusters(userId: string, payload: Array<ICluster>): Array<string> {
         let combinedIds: Array<string> = [];
-        payload.forEach(cluster => {
-            const { time_joined } = cluster.users[userId];
-            for (let id in cluster.users) {
-                const clusterUser = cluster.users[id];
-                if (time_joined < baseTime) continue;
-                if (clusterUser.time_joined < time_joined && clusterUser.time_left < time_joined) continue;
-                if (id == userId) continue;
-
-                //
-                combinedIds.push(id);
-            }
+        payload.forEach( cluster => {
+            combinedIds = [ ...combinedIds, ...cluster.users]; 
         });
 
-        return combinedIds;
+        return combinedIds.filter( id => userId !== id);
     }
 
     splitLocationData(location: string): any {
         const locationArr: string[] = location.split(':', 2);
         const longitude = parseFloat(locationArr[0]);
         const latitude = parseFloat(locationArr[1]);
-
+        
         return { longitude, latitude };
     }
 }
