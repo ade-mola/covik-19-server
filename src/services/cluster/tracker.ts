@@ -9,8 +9,11 @@ import ResponseHelper from '../../utilities/Response';
 import { ITestResult } from '../../interfaces/TestResult';
 import { IHttpResponse } from '../../interfaces/HTTPRepsonse';
 import { ICluster, IClusterInfo } from '../../interfaces/Cluster';
-import { IUser} from '../../interfaces/User';
 import Logger from '../../utilities/Logger';
+
+import InfectionTracker from '../patient-tracking/patient-clusters';
+
+var clusterQueue: Array<IClusterInfo> = []
 
 class Tracker {
     private clusterControl: any;
@@ -27,137 +30,179 @@ class Tracker {
      * @param testResult
      */
     async processTestResult(testResult: ITestResult): Promise<IHttpResponse> {
-        if (!testResult.userId) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
-        if (!testResult.isPositive) return ResponseHelper.processSuccessfulResponse({});
+        const { userId, isPositive, checkInTime } = testResult;
+        if (!userId) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
+        if (!isPositive) return ResponseHelper.processSuccessfulResponse({});
 
-        const { baseTime, currentTime } = this.getTimeRange(testResult.checkInTime, 14);
+        const infectionTracker = new InfectionTracker(userId);
+        await infectionTracker.getListOfPossibleCasesForGivenUser(userId, checkInTime, true);
 
-        const clusters = await this.clusterControl.readMany({
-            users: { $in : testResult.userId },
-            time: { $gte: baseTime, $lte: currentTime }
+        let cases: Array<any> = [];
+        infectionTracker.possibleCases.forEach((v, k) => cases.push(k));
+
+        const infectedUsers = await UserController.readMany({ user_id: cases.join() });
+        const tokens = infectedUsers.payload.map( (e: any) => e.token);
+        NotificationService.sendNotification(userId, tokens);
+
+        //
+        return ResponseHelper.processSuccessfulResponse({
+            userId,
+            cases,
         });
-
-        if (!clusters.success) {
-            Logger.error(clusters.error.mesage);
-            return ResponseHelper.processFailedResponse(500, 'Something went wrong while processing test result');
-        }
-
-        const ids: Array<string> = this.extracOtherUserIdsFromClusters(testResult.userId, clusters.payload);
-        const users = await this.userControl.readMany({ _id: { $in: [...ids] } });
-
-        if(!users.success) { 
-            Logger.error(users.error.message);
-            return ResponseHelper.processSuccessfulResponse({});
-        }
-
-        const uniqueKeys: Array<string> = users.payload.map( (user: IUser) => user.user_id);
-        await NotificationService.sendNotification(uniqueKeys);
-
-        Logger.info(`Notification was sent to users: ${uniqueKeys}`)
-        return ResponseHelper.processSuccessfulResponse({});
     }
 
-     /**
-     * Process test result sent by the test centers.
+
+   async addAndProcessClusterQueue(clusters: Array<IClusterInfo>) {
+        clusterQueue.push(...clusters);
+        this.processClusterQueue()
+    }
+
+    async processClusterQueue() {
+        while (clusterQueue.length) {
+            this.createorUpdateCluster(clusterQueue.shift() as IClusterInfo)
+        }
+    }
+
+    /**
      * 
-     * @param testResult
+     * @param clusterInfo 
      */
     async createorUpdateCluster(clusterInfo: IClusterInfo): Promise<IHttpResponse> {
 
-        const {userId, time, location} = clusterInfo;
+        const { userId, time, location } = clusterInfo;
         if (!userId || !time || !location) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
 
-        const user = await this.userControl.readOne({user_id:userId})
+        const currentTime = new Date(Date.now())
+        if (new Date(Date.parse(time)) > currentTime) return ResponseHelper.processFailedResponse(400, 'Invalid date');
 
-        if(!user.success) {
+        const user = await this.userControl.readOne({ user_id: userId })
+        if (!user.success) {
             Logger.info(`User with id: ${userId} does not exit`)
             return ResponseHelper.processFailedResponse(400, 'Invalid user');
         }
 
-        const {longitude, latitude } = this.splitLocationData(location);
-        const { baseTime, currentTime } = this.getTimeRange(time, 5);
-        
-        if (new Date(Date.parse(time)) > currentTime) return ResponseHelper.processFailedResponse(400, 'Invalid date');
-
+        const { longitude, latitude } = this.splitLocationData(location);
         if (!longitude || !latitude) return ResponseHelper.processFailedResponse(400, 'Invalid formatted location data');
 
-        const response = await this.clusterControl.readMany({
-            location: {
-                $near: {
-                  $geometry: {
-                     type: 'Point' ,
-                     coordinates: [ longitude, latitude ]
-                  },
-                  $maxDistance: 3, //within 3m
-                  $minDistance: 0
-                }
-              },
-            time: { $gte: baseTime, $lte: currentTime }
-        });
+        const responseFromClusterQuery = await this.getClusterWithinRange(longitude, latitude);
+        let clusters: Array<any>
 
-        if (response.success) {
+        if (responseFromClusterQuery.success) {
+
+            clusters = responseFromClusterQuery.payload;
+            const clusterWithSameLocation = clusters.find(each => {
+                const coordinates = each.location.coordinates;
+                return coordinates[0] == longitude && coordinates[1] == latitude
+            })
+
+            if (clusterWithSameLocation && clusterWithSameLocation.users[userId]) {
+                Logger.info(`User ${userId} already exist in this same location lonitude:${longitude}, latitude:${latitude}. Updating their time_left`)
+                const update = `users.${userId}.time_left`
+                await clusterWithSameLocation.updateOne({ '$set': { [update]: new Date(time) } });
+                return ResponseHelper.processSuccessfulResponse('1 cluster updated');
+            }
+
             //update those clusters
-            Logger.info('Found a valid existing cluster. adding user id to the cluster');
-            const clusters = response.payload as Array<any>
-            clusters.forEach( cluster => this.updateCluster(userId, cluster))
+            Logger.info(`Found a valid existing cluster. adding user id ${userId} to the cluster`);
+            clusters.forEach(cluster => this.updateCluster(userId, time, cluster))
+
+            if (!!!clusterWithSameLocation) {
+                Logger.info(`Found existing clusters for user ${userId} but exact location longitude: ${longitude} and latitude:${latitude} does not exit yet. creating extra cluster with the location`)
+                return await this.createCluster(longitude, latitude, time, userId);
+            }
             return ResponseHelper.processSuccessfulResponse(`${clusters.length} clusters updated`);
         }
 
         return await this.createCluster(longitude, latitude, time, userId);
     }
 
-    async createCluster(longitude:number, latitude: number, time:string, userId: string): Promise<IHttpResponse> {
-        
-        const newCluster : ICluster = {
+    async getClusterWithinRange(longitude: number, latitude: number): Promise<IHttpResponse> {
+
+        const response = await this.clusterControl.readMany({
+            location: {
+                $near: {
+                    $geometry: {
+                        type: 'Point',
+                        coordinates: [longitude, latitude]
+                    },
+                    $maxDistance: 3, //within 3m
+                    $minDistance: 0
+                }
+            }
+        });
+        return response;
+    }
+
+    async createCluster(longitude: number, latitude: number, time: string, userId: string): Promise<IHttpResponse> {
+
+        const newCluster: ICluster = {
             location: {
                 type: 'Point',
-                coordinates: [ longitude, latitude]
+                coordinates: [longitude, latitude]
             },
-            time: time,
-            users: [userId]
+            users: {
+                [userId]: {
+                    time_joined: new Date(time),
+                    time_left: new Date(time)
+                }
+            }
         }
 
         const cluster = await this.clusterControl.create(newCluster)
 
-        if(!cluster.success) { 
+        if (!cluster.success) {
             Logger.error(cluster.error.message);
             return ResponseHelper.processFailedResponse(500, 'Something went wrong while trying to create new cluster');
         }
 
-        Logger.info('New cluster created', newCluster)
-        return ResponseHelper.processSuccessfulResponse({ ...newCluster});
-     }
+        Logger.info(`New cluster created for user ID: ${userId}`, newCluster)
+        return ResponseHelper.processSuccessfulResponse({ ...newCluster });
+    }
 
-    async updateCluster(userId: string, cluster:any) {
-       TODO: 'make use of update cluster model in the ClusterModel class'
-       await cluster.updateOne({'$addToSet': {users: userId}});
+    async updateCluster(userId: string, time: string, cluster: any) {
+        const details = {
+            time_joined: new Date(time),
+            time_left: new Date(time)
+        }
+        const update = `users.${userId}`
+        await cluster.updateOne({ '$set': { [update]: details } });
     }
 
     /**
      * Get time range
      * @param checkInTime time the user checks in for the test.
      */
-    getTimeRange(checkInTime: string, days: number):any {
+    getTimeRange(checkInTime: string, days: number): any {
         const currentTime: Date = new Date(Date.now());
-        const baseTime: Date =  new Date (Date.parse(checkInTime) - (days * 3600 * 24  * 1000));
+        const baseTime: Date = new Date(Date.parse(checkInTime) - (days * 3600 * 24 * 1000));
 
         return { baseTime, currentTime };
     }
 
-    extracOtherUserIdsFromClusters(userId: string, payload: Array<ICluster>): Array<string> {
+    extracOtherUserIdsFromClusters(userId: string, checkInTime: string, payload: Array<ICluster>): Array<string> {
+        const { baseTime } = this.getTimeRange(checkInTime, 14);
         let combinedIds: Array<string> = [];
-        payload.forEach( cluster => {
-            combinedIds = [ ...combinedIds, ...cluster.users]; 
+        payload.forEach(cluster => {
+            const { time_joined } = cluster.users[userId];
+            for (let id in cluster.users) {
+                const clusterUser = cluster.users[id];
+                if (time_joined < baseTime) continue;
+                if (clusterUser.time_joined < time_joined && clusterUser.time_left < time_joined) continue;
+                if (id == userId) continue;
+
+                //
+                combinedIds.push(id);
+            }
         });
 
-        return combinedIds.filter( id => userId !== id);
+        return combinedIds;
     }
 
     splitLocationData(location: string): any {
         const locationArr: string[] = location.split(':', 2);
         const longitude = parseFloat(locationArr[0]);
         const latitude = parseFloat(locationArr[1]);
-        
+
         return { longitude, latitude };
     }
 }

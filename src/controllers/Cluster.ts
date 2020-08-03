@@ -26,9 +26,9 @@ class ClusterController extends SuperController {
     }
 
     async readOne (options: any): Promise <IHttpResponse> {
-        const records: Array<any> = await this.model.readRecord({ ...options});
+        const record = await this.model.readRecord({ ...options});
 
-        if (records[0]) return ResponseUtility.processSuccessfulResponse({ ...records[0]});
+        if (record[0]) return ResponseUtility.processSuccessfulResponse(record['0']);
         return ResponseUtility.processFailedResponse(404, 'Resource not found');
     }
 

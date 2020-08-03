@@ -1,12 +1,29 @@
 "use strict";
-/**
- * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
-*/
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -38,12 +55,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @author EDC: Oguntuberu Nathan O. <nateoguns.work@gmail.com>
+*/
+var firebase = __importStar(require("firebase-admin"));
 var Notification = /** @class */ (function () {
     function Notification() {
+        firebase.initializeApp({
+            credential: firebase.credential.applicationDefault(),
+            databaseURL: "",
+        });
     }
-    Notification.prototype.sendNotification = function (uniqueKeys) {
+    Notification.prototype.sendNotification = function (userId, uniqueKeys) {
         return __awaiter(this, void 0, void 0, function () {
+            var n, i;
             return __generator(this, function (_a) {
+                n = Math.ceil(uniqueKeys.length / 500);
+                for (i = 0; i < n; i++) {
+                    firebase.messaging().sendMulticast({
+                        data: {},
+                        tokens: uniqueKeys.splice((n * 500), 500),
+                    }).then(function (response) { return console.log(response); });
+                }
                 return [2 /*return*/];
             });
         });

@@ -11,7 +11,7 @@ import { processAlternatives } from './ModelHelper';
 const ClusterSchema: Schema = new Schema({
     location: {
         type: {
-            type:String,
+            type: String,
             enum: ['Point'],
             required: true
         },
@@ -20,13 +20,10 @@ const ClusterSchema: Schema = new Schema({
             required:true
         }
     },
-    time: {
-        type: Date,
-        required: true
-    },
     users: {
-        type: Array,
-        required: false
+        type: Object,
+        required: false,
+        default: {}, /** { <userId>: { time_joined, time_left } } */
     },
     is_active: {
         type: Boolean,
@@ -40,37 +37,38 @@ const ClusterSchema: Schema = new Schema({
     },
     createdAt: { 
         type: Date, 
-        required: true, 
+        required: true,
+        default: () => new Date(),
     }
 });
 
-ClusterSchema.index({ "location": "2dsphere" }, {"unique":false});
+ClusterSchema.index({ "location": "2dsphere" }, {"unique":true});
 
 const Cluster = exports = mongoose.model('Cluster', ClusterSchema);
 
 module.exports.createRecord = async (data: ICluster): Promise <any> => {
-    const new_record = new Cluster({ ...data, createdAt: Date.now() });
+    const new_record = new Cluster({ ...data });
     return await new_record.save();
 }
 
 module.exports.readRecord = async (options: any, pagination?: IPagination): Promise <any> => {
     return await Cluster.find({
         ...processAlternatives(options),
-        is_active: true
-    }, null, pagination);
+        // is_active: true
+    });
 }
 
 module.exports.updateRecord = async (options: any, data: ICluster): Promise <any> => {
     return await Cluster.update({
         ...processAlternatives(options),
-        is_active: true
+        // is_active: true
     }, { ...data });
 }
 
 module.exports.deleteRecord = async (options: any) => {
     return await Cluster.update({
         ...processAlternatives(options),
-        is_active: true
+        // is_active: true
     }, {
         is_active: false,
         is_deleted: true

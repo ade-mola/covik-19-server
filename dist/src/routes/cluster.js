@@ -14,10 +14,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -51,7 +52,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var auth_1 = require("../middlewares/auth");
@@ -59,14 +59,14 @@ var router = express_1.default.Router();
 var tracker_1 = __importDefault(require("../services/cluster/tracker"));
 var Validation_1 = require("./Validation");
 var celebrate_1 = require("celebrate");
-router.get('/', function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.get('/', function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         try {
-            res.send({
-                success: true,
-                error: null,
-                payload: 'cluster endpoint'
-            });
+            return [2 /*return*/, res.send({
+                    success: true,
+                    error: null,
+                    payload: 'cluster endpoint'
+                })];
         }
         catch (error) {
             next(error);
@@ -74,7 +74,7 @@ router.get('/', function (req, res, next) { return __awaiter(_this, void 0, void
         return [2 /*return*/];
     });
 }); });
-router.post('/result', auth_1.requireAuth, celebrate_1.celebrate({ body: Validation_1.TestResultSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+router.post('/result', auth_1.requireAuth, celebrate_1.celebrate({ body: Validation_1.TestResultSchema }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var response, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -96,26 +96,28 @@ router.post('/result', auth_1.requireAuth, celebrate_1.celebrate({ body: Validat
         }
     });
 }); });
-router.post('/', auth_1.requireAuth, celebrate_1.celebrate({ body: Validation_1.NewClusterSchema }), function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
-    var response, error_2;
+router.post('/', /* requireAuth,*/ celebrate_1.celebrate({ body: [Validation_1.NewClusterSchema] }), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, tracker_1.default.createorUpdateCluster(req.body)];
-            case 1:
-                response = _a.sent();
-                if (response.success)
-                    res.status(200).send(__assign({}, response));
-                else
-                    res.status(response.error.code).send(__assign({}, response));
-                return [3 /*break*/, 3];
-            case 2:
-                error_2 = _a.sent();
-                next(error_2);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+        try {
+            tracker_1.default.addAndProcessClusterQueue(req.body);
+            res.send("request sucessfully enqueued to be processed");
         }
+        catch (error) {
+            next(error);
+        }
+        return [2 /*return*/];
     });
 }); });
+// router.post('/', /* requireAuth,*/ celebrate({body: NewClusterSchema}), async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const response = await ClusterTrackerService.createorUpdateCluster(req.body as IClusterInfo)
+//         if (response.success) res.status(200).send({ ...response})
+//         else {
+//             console.log(response)
+//             res.status(response.error.code).send({ ...response}) 
+//         }
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 exports.default = router;
