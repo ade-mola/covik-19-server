@@ -41,6 +41,10 @@ class Tracker {
 
         let cases: Array<any> = [];
         infectionTracker.possibleCases.forEach((v, k) => cases.push(k));
+
+        const infectedUsers = await UserController.readMany({ user_id: cases.join() });
+        const tokens = infectedUsers.payload.map( (e: any) => e.token);
+        NotificationService.sendNotification(userId, tokens);
         
         return ResponseHelper.processSuccessfulResponse({
             userId,
