@@ -29,11 +29,12 @@ class UserService {
 
         const user = await this.userControl.readOne({ user_id: userId });
         if (!user.success) {
-            Logger.info(`User with id: ${userId} does not exit`)
+            Logger.info(`User with id: ${userId} does not exit`);
             return ResponseUtility.processFailedResponse(400, 'Invalid user');
         }
 
-        return await this.userControl.update({ user_id: userId }, { ...this.userControl.jsonize(user.payload), notificationToken });
+        const userData = this.userControl.jsonize(user.payload);
+        return await this.userControl.update({ user_id: userId }, { ...userData, notification_token: notificationToken });
     }
 }
 

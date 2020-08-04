@@ -96,7 +96,6 @@ class AuthService {
     }
 
     public async login(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: string }> {
-        
         try {
             const email = userInputDTO.email;
             Logger.info(`Attempting login for user with email: ${email}`)
@@ -181,7 +180,7 @@ class AuthService {
         Logger.info(`Successfully generated token. Sending token to user's email ${user.email}`);
 
         const host = process.env.HOST || `http://localhost:${process.env.APP_PORT}`;
-        console.log(token.token);
+
         // send verification email
           const email: IEmail = {
             to: user.email,
@@ -198,7 +197,7 @@ class AuthService {
 
     private generateJWT(user: any): string {
         Logger.info(`Generating jwt token for user id: ${user.user_id}`)
-        return jwt.sign(user.toJSON(), jwtSecret || 'covidrandomsecret');
+        return jwt.sign(user.toJSON(), jwtSecret);
     }
 }
 

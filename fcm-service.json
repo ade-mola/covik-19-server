@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "coviktracker",
+  "private_key_id": "420bcd431259b644c563bf974aaec0061303def0",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDA1+Fy8/7eqlJP\ndmyIsGZ40cvHEGyT2gv1DteQgAz6EoP83w8dbYnOC/itZXuuT3i9UkZVIDYwYuR3\nmKlU2Dcn882tNWYR5RYWu40kOSlUXuuRMh9VORTJvmxFifKcQkEijgKMI59I1NBk\ny3HMW7J5y/hE4UN9TEOfrTwlmwzcxMxL3iA2jL/ldOnMDN5hDfmlSMvBmK46xSnX\n+yNs8lANANBvhe1bTpklWWvQdsWWkqpsQHPffP4h/FaV7seCR0GyCjNaQvNBwPaX\nCgFVwHM6gB3L7qzBUDpy4nkvpwyQADMp20KVAuLf/SPccMRGAxdPvhAxanWXe3uQ\nViPsqiIVAgMBAAECggEAFJcYSdNWi8TIzBY7aW7YSh8wcF1HEpROAYjnqFSbzhmr\nARV6AizfcWIi17TFu2td220M+GrbjlgIx+JDdj0tynTEKbHRZ6i7roqw+8Skro8B\n/PtKkClrmEzeN6COiHOki8F48SieicK7S3/Tczv5Nvr507TvpVG+yK5RBTzkZy/m\nQiek9i34fohHzvaVmNrV6HKDyRu876L/B7M4V1hNG/F4Ouz8WbxhMYMjc8CZ/WE9\ngi8q7cyOg2PTTzK8uy0SYDAO9/cX/C8maILUf/DX+mMvtZhqvbOEn4nARKxZ6mwL\nysAQ1pfvxGGFLTrS82kOTfDFO7nN8x4aHyTfDB8a8QKBgQD8MRwI0BK3ZVgyBq6y\nc7VFSeHvfVRWoXBv9KMug2MVbn0IQBmlsdK7U8lqtc/dreKmpP+Ly3N4UPW+nNPk\n7wwk1H6wbNx++a/68oXdG4hSxAt5EKyFhW/zhJaoWLTA/ZmcyZFodOyLCO76a6ef\nADUihtpfiGtIM9/nx4F4a98aHQKBgQDDwVlmjqrP8NGm/PGRfOgRzUFtC5jCYBjU\nye0u7tc6nDmxKL0HtElBIZQ2fCEgNpFJsa43hdDEzHVmmfcgVTo27CBU2SqtTnti\ntqvx7p+EfpujlkkAI5fBNmP3+DKIyTlXxOtZ32Cmvb8jI45K9uQ6cRV5p85wucfV\n9POvw/TmWQKBgQC5646KZLNXpwwlHU4PW0RJB5XcVB4oG65jqwveT5hthV4CBhei\nUv1Tgwqbc9wBxp6wUjXfHqdLDQyOcNm6Dg163XlkoWzQ40y8iazse869jbATmZpG\neUA2XAoho/vlx1BHCUb8pi54taZQ0arqimGhyZ8WDOFignPQUQF/AK+idQKBgQCu\nkyn1alou46c08vNEOk6EQbaNVwA+qJC8g/BAIMRVAqn4skoSKtgBe76/8GdiYQek\n3w5teas7NtOkUr6vWRJ3lJEo2htTP2COIjappZMhCAApHYew1g0qRCVXKUN39Wxs\nN7NkDPAXA7UH01e8xv22mM78FYjnwubSiocgQvOO0QKBgHIArCmcEBgyNzadQp75\nsawaabEFTgfvqoseeSLO698qWGssqpRqXMlHxpY4onqHD2yLlYIN946e1D/v/5up\nDVUEuJCJ4C6u9MTaKkI6KJVwR6dkj0PQQvWkT14po4XkqON35wjZTBTVHedFYD3I\nr7f7h6hXunQoJnKXQz74Tnz0\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-96nmr@coviktracker.iam.gserviceaccount.com",
+  "client_id": "116113483227070568564",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-96nmr%40coviktracker.iam.gserviceaccount.com"
+}

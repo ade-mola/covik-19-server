@@ -25,7 +25,7 @@ const UserSchema: Schema = new Schema({
         type: String,
         required: false,
         unique: true,
-        default: '',
+        default: "mock_token",
     },
     is_active: {
         type: Boolean,
@@ -64,14 +64,14 @@ module.exports.readRecord = async (options: any, pagination?: IPagination): Prom
 }
 
 module.exports.updateRecord = async (options: any, data: IUser): Promise <any> => {
-    return await User.updateMany({
+    return await User.update({
         ...processAlternatives(options),
         is_active: true
-    }, data );
+    }, { ...data });
 }
 
 module.exports.deleteRecord = async (options: any) => {
-    return await User.updateMany({
+    return await User.update({
         ...processAlternatives(options),
         is_active: true
     }, {

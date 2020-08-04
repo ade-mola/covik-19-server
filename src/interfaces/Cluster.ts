@@ -1,7 +1,7 @@
 export interface ICluster {
     location: any;
-    time: string;
-    users: Array<string>;
+    time?: string;
+    users: any;
 }
 
 export interface IClusterInfo{

@@ -14,21 +14,21 @@ import { celebrate } from 'celebrate';
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        return res.send({
+        res.send({
             success: true,
             error: null,
             payload: 'cluster endpoint'
         })
-    } catch (error) {
+    } catch(error) {
         next(error)
     }
 });
 
-router.post('/result', requireAuth, celebrate({ body: TestResultSchema }), async (req: Request, res: Response, next: NextFunction) => {
+router.post('/result', /*requireAuth,*/ celebrate({body: TestResultSchema}), async (req: Request, res: Response, next: NextFunction) => {
     try {
         const response = await ClusterTrackerService.processTestResult(req.body as ITestResult)
-        if (response.success) res.status(200).send({ ...response })
-        else res.status(response.error.code).send({ ...response })
+        if (response.success) res.status(200).send({ ...response})
+        else res.status(response.error.code).send({ ...response}) 
     } catch (error) {
         next(error);
     }    
