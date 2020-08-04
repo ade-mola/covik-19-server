@@ -30,13 +30,14 @@ class Tracker {
      * @param testResult
      */
     async processTestResult(testResult: ITestResult): Promise<IHttpResponse> {
-        if (!testResult.userId) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
-        if (!testResult.isPositive) return ResponseHelper.processSuccessfulResponse({});
+        const { userId, isPositive, checkInTime } = testResult;
+        if (!userId) return ResponseHelper.processFailedResponse(400, 'Invalid request data');
+        if (!isPositive) return ResponseHelper.processSuccessfulResponse({});
 
-        const { baseTime, currentTime } = this.getTimeRange(testResult.checkInTime, 14);
+        const { baseTime } = this.getTimeRange(checkInTime, 14);
 
         const infectionTracker = new InfectionTracker(userId);
-        await infectionTracker.getListOfPossibleCasesForGivenUser(userId, checkInTime, true);
+        await infectionTracker.getListOfPossibleCasesForGivenUser(userId, baseTime, true);
 
         let cases: Array<any> = [];
         infectionTracker.possibleCases.forEach((v, k) => cases.push(k));
