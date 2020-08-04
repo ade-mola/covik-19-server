@@ -87,7 +87,7 @@ var UserSchema = new mongoose_1.Schema({
     },
     notification_token: {
         type: String,
-        required: true,
+        required: false,
         unique: true,
     },
     is_active: {
