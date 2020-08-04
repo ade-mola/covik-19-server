@@ -41,30 +41,7 @@ class Tracker {
 
         let cases: Array<any> = [];
         infectionTracker.possibleCases.forEach((v, k) => cases.push(k));
-
-
-        // const userDbKey = `users.${userId}`;
-        // const clusters = await this.clusterControl.readMany({
-        //     [userDbKey]: { $exists: true }
-        // });
-
-        // if (!clusters.success) {
-        //     Logger.error(clusters.error.mesage);
-        //     return ResponseHelper.processFailedResponse(500, 'Something went wrong while processing test result');
-        // }
-
-        // const ids: Array<string> = this.extracOtherUserIdsFromClusters(userId, checkInTime, clusters.payload);
-        // const users = await this.userControl.readMany({ user_id: { $in: [...ids] } });
-
-        // if (!users.success) {
-        //     Logger.error(users.error.message);
-        //     return ResponseHelper.processSuccessfulResponse({});
-        // }
-
-        // const uniqueKeys: Array<string> = users.payload.map((user: IUser) => user.user_id);
-        // await NotificationService.sendNotification(userId, uniqueKeys);
-
-        // Logger.info(`Notification was sent to users: ${uniqueKeys}`)
+        
         return ResponseHelper.processSuccessfulResponse({
             userId,
             cases,
