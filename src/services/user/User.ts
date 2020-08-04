@@ -11,8 +11,8 @@ import { IHttpResponse } from '../../interfaces/HTTPRepsonse';
 // Write Heavy Logic in services
 class UserService {
     private userControl: any;
-    
-    constructor() { 
+
+    constructor() {
         this.userControl = UserController
     }
 
@@ -33,7 +33,8 @@ class UserService {
             return ResponseUtility.processFailedResponse(400, 'Invalid user');
         }
 
-        return await this.userControl.update({notificationToken}, user.payload as IUser);
+        const userData = this.userControl.jsonize(user.payload);
+        return await this.userControl.update({ user_id: userId }, { ...userData, notification_token: notificationToken });
     }
 }
 
