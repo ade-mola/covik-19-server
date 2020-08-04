@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -52,8 +51,7 @@ var PatientCluster = /** @class */ (function () {
     PatientCluster.prototype.getListOfPossibleCasesForGivenUser = function (userId, baseTime, isStart) {
         if (isStart === void 0) { isStart = false; }
         return __awaiter(this, void 0, void 0, function () {
-            var clusters, user_time_in_cluster;
-            var _a;
+            var _a, clusters, user_time_in_cluster;
             var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
@@ -96,6 +94,7 @@ var PatientCluster = /** @class */ (function () {
                                         if (uid == userId)
                                             return [3 /*break*/, 3];
                                         if (!((user.time_joined >= min_time && user.time_joined <= max_time) || (min_time >= user.time_joined && min_time <= user.time_left))) return [3 /*break*/, 3];
+                                        console.log({ uid: uid, joined: user.time_joined, left: user.time_left });
                                         this.possibleCases.set(uid, true);
                                         return [4 /*yield*/, this.getListOfPossibleCasesForGivenUser(user.userId, user.time_left)];
                                     case 2:
@@ -108,6 +107,17 @@ var PatientCluster = /** @class */ (function () {
                                 }
                             });
                         }); });
+                        // const users = clusters.reduce((all_users: any, cluster) => {
+                        //     return [ ...all_users, ...cluster.users ];
+                        // }, []);
+                        // //
+                        // users.forEach(async (user: any) => {
+                        //     if (user.timeLeft >= baseTime) {
+                        //         this.possibleCases.set(user, true);
+                        //         await this.getListOfPossibleCasesForGivenUser(user.userId, user.timeLeft);
+                        //     }
+                        // });
+                        //
                         return [2 /*return*/];
                 }
             });

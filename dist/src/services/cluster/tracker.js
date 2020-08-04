@@ -11,11 +11,10 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -135,8 +134,7 @@ var Tracker = /** @class */ (function () {
     */
     Tracker.prototype.createorUpdateCluster = function (clusterInfo) {
         return __awaiter(this, void 0, void 0, function () {
-            var userId, time, location, currentTime, user, _a, longitude, latitude, responseFromClusterQuery, clusters, clusterWithSameLocation, update;
-            var _b;
+            var _a, userId, time, location, currentTime, user, _b, longitude, latitude, responseFromClusterQuery, clusters, clusterWithSameLocation, update;
             var _this = this;
             return __generator(this, function (_c) {
                 switch (_c.label) {
@@ -154,7 +152,7 @@ var Tracker = /** @class */ (function () {
                             Logger_1.default.info("User with id: " + userId + " does not exit");
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid user')];
                         }
-                        _a = this.splitLocationData(location), longitude = _a.longitude, latitude = _a.latitude;
+                        _b = this.splitLocationData(location), longitude = _b.longitude, latitude = _b.latitude;
                         if (!longitude || !latitude)
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid formatted location data')];
                         return [4 /*yield*/, this.getClusterWithinRange(longitude, latitude)];
@@ -169,7 +167,7 @@ var Tracker = /** @class */ (function () {
                         if (!(clusterWithSameLocation && clusterWithSameLocation.users[userId])) return [3 /*break*/, 4];
                         Logger_1.default.info("User " + userId + " already exist in this same location lonitude:" + longitude + ", latitude:" + latitude + ". Updating their time_left");
                         update = "users." + userId + ".time_left";
-                        return [4 /*yield*/, clusterWithSameLocation.updateOne({ '$set': (_b = {}, _b[update] = new Date(time), _b) })];
+                        return [4 /*yield*/, clusterWithSameLocation.updateOne({ '$set': (_a = {}, _a[update] = new Date(time), _a) })];
                     case 3:
                         _c.sent();
                         return [2 /*return*/, Response_1.default.processSuccessfulResponse('1 cluster updated')];
@@ -214,8 +212,7 @@ var Tracker = /** @class */ (function () {
     };
     Tracker.prototype.createCluster = function (longitude, latitude, time, userId) {
         return __awaiter(this, void 0, void 0, function () {
-            var newCluster, cluster;
-            var _a;
+            var _a, newCluster, cluster;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -246,8 +243,7 @@ var Tracker = /** @class */ (function () {
     };
     Tracker.prototype.updateCluster = function (userId, time, cluster) {
         return __awaiter(this, void 0, void 0, function () {
-            var details, update;
-            var _a;
+            var _a, details, update;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:

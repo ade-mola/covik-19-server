@@ -14,8 +14,6 @@ const router : Router = express.Router();
 
 
 router.use(async (req: Request, res: Response, next: NextFunction) => {
-    console.log(`[Incoming request] ${req.method} ${req.url}`);
-    
     req.headers["access-control-allow-origin"] = '*';
     req.headers["access-control-allow-headers"] = '*';
 

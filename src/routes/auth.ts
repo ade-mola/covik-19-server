@@ -2,8 +2,9 @@ import express, { Router, Response, Request, NextFunction } from "express";
 import { celebrate, errors } from 'celebrate';
 import { IHttpResponse } from "../interfaces/HTTPRepsonse";
 import { IUserInputDTO } from "../interfaces/User";
-import { UserSchema, TokenSchema, EmailSchema } from './Validation';
-import AuthController from '../controllers/Auth';
+import { UserSchema, TokenSchema, EmailSchema } from './Validation'
+import { requireAuth } from "../middlewares/auth";
+import AuthController from '../controllers/Auth'
 
 const router: Router = express.Router();
 
@@ -23,7 +24,7 @@ router.post(
 });
 
 router.post(
-    '/login', celebrate({ body: UserSchema }),     
+    '/login', requireAuth,  celebrate({ body: UserSchema }),     
     
     async(req: Request, res: Response, next: NextFunction) => {
         try {
