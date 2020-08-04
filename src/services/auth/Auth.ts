@@ -96,7 +96,6 @@ class AuthService {
     }
 
     public async login(userInputDTO: IUserInputDTO): Promise<{ user: IUser; token: string }> {
-        
         try {
             const email = userInputDTO.email;
             Logger.info(`Attempting login for user with email: ${email}`)
