@@ -24,7 +24,7 @@ router.post(
 });
 
 router.post(
-    '/login', requireAuth,  celebrate({ body: UserSchema }),     
+    '/login', celebrate({ body: UserSchema }),     
     
     async(req: Request, res: Response, next: NextFunction) => {
         try {
