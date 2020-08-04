@@ -26,6 +26,7 @@ const UserSchema: Schema = new Schema({
         type: String,
         required: false,
         unique: true,
+        default: "mock_token",
     },
     is_active: {
         type: Boolean,
