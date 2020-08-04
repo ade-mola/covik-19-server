@@ -46,6 +46,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -72,7 +79,7 @@ var Tracker = /** @class */ (function () {
      */
     Tracker.prototype.processTestResult = function (testResult) {
         return __awaiter(this, void 0, void 0, function () {
-            var userId, isPositive, checkInTime, infectionTracker, cases, infectedUsers, tokens;
+            var userId, isPositive, checkInTime, baseTime, infectionTracker, cases, infectedUsers, tokens;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -81,8 +88,9 @@ var Tracker = /** @class */ (function () {
                             return [2 /*return*/, Response_1.default.processFailedResponse(400, 'Invalid request data')];
                         if (!isPositive)
                             return [2 /*return*/, Response_1.default.processSuccessfulResponse({})];
+                        baseTime = this.getTimeRange(checkInTime, 14).baseTime;
                         infectionTracker = new patient_clusters_1.default(userId);
-                        return [4 /*yield*/, infectionTracker.getListOfPossibleCasesForGivenUser(userId, checkInTime, true)];
+                        return [4 /*yield*/, infectionTracker.getListOfPossibleCasesForGivenUser(userId, baseTime, true)];
                     case 1:
                         _a.sent();
                         cases = [];
@@ -121,9 +129,10 @@ var Tracker = /** @class */ (function () {
         });
     };
     /**
-     *
-     * @param clusterInfo
-     */
+    * Process test result sent by the test centers.
+    *
+    * @param testResult
+    */
     Tracker.prototype.createorUpdateCluster = function (clusterInfo) {
         return __awaiter(this, void 0, void 0, function () {
             var userId, time, location, currentTime, user, _a, longitude, latitude, responseFromClusterQuery, clusters, clusterWithSameLocation, update;
@@ -229,7 +238,7 @@ var Tracker = /** @class */ (function () {
                             Logger_1.default.error(cluster.error.message);
                             return [2 /*return*/, Response_1.default.processFailedResponse(500, 'Something went wrong while trying to create new cluster')];
                         }
-                        Logger_1.default.info("New cluster created for user ID: " + userId, newCluster);
+                        Logger_1.default.info('New cluster created', newCluster);
                         return [2 /*return*/, Response_1.default.processSuccessfulResponse(__assign({}, newCluster))];
                 }
             });
@@ -264,24 +273,12 @@ var Tracker = /** @class */ (function () {
         var baseTime = new Date(Date.parse(checkInTime) - (days * 3600 * 24 * 1000));
         return { baseTime: baseTime, currentTime: currentTime };
     };
-    Tracker.prototype.extracOtherUserIdsFromClusters = function (userId, checkInTime, payload) {
-        var baseTime = this.getTimeRange(checkInTime, 14).baseTime;
+    Tracker.prototype.extracOtherUserIdsFromClusters = function (userId, payload) {
         var combinedIds = [];
         payload.forEach(function (cluster) {
-            var time_joined = cluster.users[userId].time_joined;
-            for (var id in cluster.users) {
-                var clusterUser = cluster.users[id];
-                if (time_joined < baseTime)
-                    continue;
-                if (clusterUser.time_joined < time_joined && clusterUser.time_left < time_joined)
-                    continue;
-                if (id == userId)
-                    continue;
-                //
-                combinedIds.push(id);
-            }
+            combinedIds = __spreadArrays(combinedIds, cluster.users);
         });
-        return combinedIds;
+        return combinedIds.filter(function (id) { return userId !== id; });
     };
     Tracker.prototype.splitLocationData = function (location) {
         var locationArr = location.split(':', 2);

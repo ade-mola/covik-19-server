@@ -83,7 +83,6 @@ var UserSchema = new mongoose_1.Schema({
     user_id: {
         type: String,
         required: true,
-        unique: true,
     },
     notification_token: {
         type: String,
@@ -126,7 +125,7 @@ module.exports.createRecord = function (data) { return __awaiter(void 0, void 0,
 module.exports.readRecord = function (options, pagination) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, User.find(__assign({}, ModelHelper_1.processAlternatives(options)))];
+            case 0: return [4 /*yield*/, User.find(__assign(__assign({}, ModelHelper_1.processAlternatives(options)), { is_active: true }), null, pagination)];
             case 1: return [2 /*return*/, _a.sent()];
         }
     });
