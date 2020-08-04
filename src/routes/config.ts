@@ -28,10 +28,6 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
 });
 
 /** */
-router.use((req: Request, res: Response, next: NextFunction) => {
-    console.log(`[Route Config] Incoming request: ${req.method} ${req.path} ${req.ip}`);
-    next();
-})
 router.use('/users', users_route_handler);
 router.use('/clusters', clusters_route_handler);
 
@@ -51,7 +47,6 @@ router.use(async (req: Request, res: Response, next: NextFunction) => {
 });
 
 router.use(async (error: any, req: Request, res: Response, next: NextFunction) => {
-    console.log(`[Route Config] general error: ${error.message}`);
     return res.status(error.status || 500).send({
         success: false,
             error: {

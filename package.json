@@ -24,8 +24,7 @@
   "homepage": "https://github.com/ade-mola/covik-19-server#readme",
   "devDependencies": {
     "@types/node": "^13.13.5",
-    "tsc": "^1.20150623.0",
-    "typescript": "^3.9.5"
+    "typescript": "^3.3.3"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.1.0",
@@ -39,7 +38,6 @@
     "@types/jsonwebtoken": "^8.3.2",
     "@types/mongoose": "^5.7.16",
     "@types/uuid": "^7.0.3",
-    "axios": "^0.19.2",
     "bcrypt": "^3.0.6",
     "celebrate": "^12.1.1",
     "compression": "^1.7.4",
@@ -49,13 +47,12 @@
     "firebase-admin": "^8.13.0",
     "helmet": "^3.22.0",
     "jsonwebtoken": "^8.5.1",
-    "mongo-client": "^0.2.1",
-    "mongodb": "^3.5.9",
     "mongoose": "^5.9.13",
     "nanoid": "^3.1.9",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^2.3.0",
     "ts-node": "^8.10.1",
+    "tsc": "^1.20150623.0",
     "winston": "^3.2.1"
   }
 }
