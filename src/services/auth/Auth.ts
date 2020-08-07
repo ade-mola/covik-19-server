@@ -180,12 +180,14 @@ class AuthService {
         token.save()
         Logger.info(`Successfully generated token. Sending token to user's email ${user.email}`);
 
-        const host = process.env.HOST || `http://localhost:${process.env.APP_PORT}`;
+        const env_vars = process.env
+        const host = env_vars.HOST || `http://localhost:${process.env.APP_PORT}`;
+        const from_email = env_vars.SENDGRID_EMAIL || "default_email"
 
         // send verification email
           const email: IEmail = {
             to: user.email,
-            from: "insert verified email from sned grid her",
+            from: from_email,
             subject: "Email Verification",
             text: "Some uselss text",
             html: `<p>Please verify your account by clicking the link: 
