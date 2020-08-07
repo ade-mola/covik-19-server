@@ -34,6 +34,7 @@ class AuthService {
         const password_hash = await this.generatePassword(userInputDTO.password);
         const newUser : IUser = {
             email: userInputDTO.email,
+            notification_token: userInputDTO.notification_token,
             password: password_hash,
             user_id: nanoid()
         };

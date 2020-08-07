@@ -92,6 +92,7 @@ var AuthService = /** @class */ (function () {
                         password_hash = _a.sent();
                         newUser = {
                             email: userInputDTO.email,
+                            notification_token: userInputDTO.notification_token,
                             password: password_hash,
                             user_id: nanoid_1.nanoid()
                         };

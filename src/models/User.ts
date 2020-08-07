@@ -23,8 +23,7 @@ const UserSchema: Schema = new Schema({
     },
     notification_token: {
         type: String,
-        required: false,
-        unique: true,
+        required: true,
         default: "mock_token",
     },
     is_active: {
