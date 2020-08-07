@@ -85,7 +85,6 @@ router.use(function (req, res, next) { return __awaiter(void 0, void 0, void 0, 
 }); });
 router.use(function (error, req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        console.log(error);
         return [2 /*return*/, res.status(error.status || 500).send({
                 success: false,
                 error: {

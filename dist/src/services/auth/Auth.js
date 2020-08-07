@@ -268,7 +268,7 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.generateAndSendVerificationToken = function (user) {
         return __awaiter(this, void 0, void 0, function () {
-            var token, host, email;
+            var token, env_vars, host, from_email, email;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -279,10 +279,12 @@ var AuthService = /** @class */ (function () {
                         });
                         token.save();
                         Logger_1.default.info("Successfully generated token. Sending token to user's email " + user.email);
-                        host = process.env.HOST || "http://localhost:" + process.env.APP_PORT;
+                        env_vars = process.env;
+                        host = env_vars.HOST || "http://localhost:" + process.env.APP_PORT;
+                        from_email = env_vars.SENDGRID_EMAIL || "default_email";
                         email = {
                             to: user.email,
-                            from: "insert verified email from sned grid her",
+                            from: from_email,
                             subject: "Email Verification",
                             text: "Some uselss text",
                             html: "<p>Please verify your account by clicking the link: \n            <a href=\"" + host + "/users/auth/verify?token=" + token.token + "\">Click here to verify your account</a> </p>"
