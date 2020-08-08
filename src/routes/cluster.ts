@@ -7,7 +7,6 @@ import { requireAuth } from "../middlewares/auth";
 const router: Router = express.Router();
 
 import ClusterTrackerService from '../services/cluster/tracker';
-import { IClusterInfo } from '../interfaces/Cluster';
 import { ITestResult } from '../interfaces/TestResult';
 import { clusterSchema, TestResultSchema } from './Validation';
 import { celebrate } from 'celebrate';

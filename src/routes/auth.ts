@@ -2,7 +2,7 @@ import express, { Router, Response, Request, NextFunction } from "express";
 import { celebrate, errors } from 'celebrate';
 import { IHttpResponse } from "../interfaces/HTTPRepsonse";
 import { IUserInputDTO } from "../interfaces/User";
-import { UserSchema, TokenSchema, EmailSchema } from './Validation'
+import { NewUserSchema, ExistingUserSchema, TokenSchema, EmailSchema } from './Validation'
 import { requireAuth } from "../middlewares/auth";
 import AuthController from '../controllers/Auth'
 
@@ -11,7 +11,7 @@ const router: Router = express.Router();
 router.use(errors())
 
 router.post(
-    '/signUp', celebrate({ body: UserSchema }),
+    '/signUp', celebrate({ body: NewUserSchema }),
 
     async(req: Request, res: Response, next: NextFunction) => {
         try {
@@ -24,7 +24,7 @@ router.post(
 });
 
 router.post(
-    '/login', requireAuth,  celebrate({ body: UserSchema }),     
+    '/login', requireAuth,  celebrate({ body: ExistingUserSchema }),     
     
     async(req: Request, res: Response, next: NextFunction) => {
         try {

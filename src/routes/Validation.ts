@@ -1,9 +1,14 @@
 import { Joi } from 'celebrate'
 
-export const UserSchema = Joi.object().keys({
+export const NewUserSchema = Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().min(5).max(255).required(),
     notification_token: Joi.string().required(),
+  })
+
+  export const ExistingUserSchema = Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().min(5).max(255).required(),
   })
 
 export const TokenSchema =  { token: Joi.string().token().required() }

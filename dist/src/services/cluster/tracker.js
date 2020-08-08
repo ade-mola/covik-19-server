@@ -181,9 +181,7 @@ var Tracker = /** @class */ (function () {
                         return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
                     case 5: return [2 /*return*/, _c.sent()];
                     case 6: return [2 /*return*/, Response_1.default.processSuccessfulResponse(clusters.length + " clusters updated")];
-                    case 7:
-                        Logger_1.default.info("time is" + Date.parse(time));
-                        return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
+                    case 7: return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
                     case 8: return [2 /*return*/, _c.sent()];
                 }
             });
