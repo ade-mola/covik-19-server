@@ -36,7 +36,7 @@ router.post(
         }
 });
 
-router.post(
+router.get(
     '/verify', celebrate({ query: TokenSchema }),
       
     async(req: Request, res: Response, next: NextFunction) => {
