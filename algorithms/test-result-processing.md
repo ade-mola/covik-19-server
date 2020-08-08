@@ -9,4 +9,4 @@
     b. possibly infected users must have joined or left the cluster ON or AFTER the infected user joined.
     c. the infected user cannot be marked as a possible case BECAUSE it has been confirmed.
 7. Send Notifications to the possibly infected users.
-8. stop.
+8. stop.cxz`e

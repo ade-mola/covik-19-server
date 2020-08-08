@@ -12,7 +12,8 @@ import * as bcrypt from 'bcrypt';
 const Token = require('../../models/Token');
 const UserModel = require('../../models/User');
 
-const jwtSecret = process.env.JWT_SECRET || '';
+const env_vars = process.env;
+const jwtSecret = env_vars.JWT_SECRET || '';
 
 class AuthService {
 
@@ -181,12 +182,13 @@ class AuthService {
         token.save()
         Logger.info(`Successfully generated token. Sending token to user's email ${user.email}`);
 
-        const host = process.env.HOST || `http://localhost:${process.env.APP_PORT}`;
+        const host = env_vars.HOST || `http://localhost:${process.env.APP_PORT}`;
+        const sender_email = env_vars.SENDGRID_EMAIL || ""
 
         // send verification email
           const email: IEmail = {
             to: user.email,
-            from: "insert verified email from sned grid her",
+            from: sender_email,
             subject: "Email Verification",
             text: "Some uselss text",
             html: `<p>Please verify your account by clicking the link: 
