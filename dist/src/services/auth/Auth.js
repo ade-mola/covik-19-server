@@ -80,6 +80,7 @@ var AuthService = /** @class */ (function () {
                         newUser = {
                             email: userInputDTO.email,
                             password: password_hash,
+                            notification_token: userInputDTO.notification_token || "mock_token",
                             user_id: nanoid_1.nanoid()
                         };
                         return [4 /*yield*/, UserModel.createRecord(newUser)];

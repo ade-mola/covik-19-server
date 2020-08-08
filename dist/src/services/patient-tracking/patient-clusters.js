@@ -94,7 +94,6 @@ var PatientCluster = /** @class */ (function () {
                                         if (uid == userId)
                                             return [3 /*break*/, 3];
                                         if (!((user.time_joined >= min_time && user.time_joined <= max_time) || (min_time >= user.time_joined && min_time <= user.time_left))) return [3 /*break*/, 3];
-                                        console.log({ uid: uid, joined: user.time_joined, left: user.time_left });
                                         this.possibleCases.set(uid, true);
                                         return [4 /*yield*/, this.getListOfPossibleCasesForGivenUser(user.userId, user.time_left)];
                                     case 2:
@@ -107,17 +106,6 @@ var PatientCluster = /** @class */ (function () {
                                 }
                             });
                         }); });
-                        // const users = clusters.reduce((all_users: any, cluster) => {
-                        //     return [ ...all_users, ...cluster.users ];
-                        // }, []);
-                        // //
-                        // users.forEach(async (user: any) => {
-                        //     if (user.timeLeft >= baseTime) {
-                        //         this.possibleCases.set(user, true);
-                        //         await this.getListOfPossibleCasesForGivenUser(user.userId, user.timeLeft);
-                        //     }
-                        // });
-                        //
                         return [2 /*return*/];
                 }
             });

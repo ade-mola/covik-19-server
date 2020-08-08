@@ -57,6 +57,7 @@ var User_1 = __importDefault(require("../../controllers/User"));
 var Response_1 = __importDefault(require("../../utilities/Response"));
 var Logger_1 = __importDefault(require("../../utilities/Logger"));
 var patient_clusters_1 = __importDefault(require("../patient-tracking/patient-clusters"));
+var clusterQueue = [];
 var Tracker = /** @class */ (function () {
     function Tracker() {
         this.clusterControl = Cluster_1.default;
@@ -106,6 +107,25 @@ var Tracker = /** @class */ (function () {
                                 cases: cases,
                             })];
                 }
+            });
+        });
+    };
+    Tracker.prototype.addAndProcessClusterQueue = function (clusters) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                clusterQueue.push.apply(clusterQueue, clusters);
+                this.processClusterQueue();
+                return [2 /*return*/, Response_1.default.processSuccessfulResponse("request sucessfully enqueued to be processed")];
+            });
+        });
+    };
+    Tracker.prototype.processClusterQueue = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                while (clusterQueue.length) {
+                    this.createorUpdateCluster(clusterQueue.shift());
+                }
+                return [2 /*return*/];
             });
         });
     };
@@ -161,7 +181,9 @@ var Tracker = /** @class */ (function () {
                         return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
                     case 5: return [2 /*return*/, _c.sent()];
                     case 6: return [2 /*return*/, Response_1.default.processSuccessfulResponse(clusters.length + " clusters updated")];
-                    case 7: return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
+                    case 7:
+                        Logger_1.default.info("time is" + Date.parse(time));
+                        return [4 /*yield*/, this.createCluster(longitude, latitude, time, userId)];
                     case 8: return [2 /*return*/, _c.sent()];
                 }
             });

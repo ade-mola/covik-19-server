@@ -9,7 +9,7 @@ const router: Router = express.Router();
 import ClusterTrackerService from '../services/cluster/tracker';
 import { IClusterInfo } from '../interfaces/Cluster';
 import { ITestResult } from '../interfaces/TestResult';
-import { NewClusterSchema, TestResultSchema } from './Validation';
+import { clusterSchema, TestResultSchema } from './Validation';
 import { celebrate } from 'celebrate';
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
@@ -34,26 +34,14 @@ router.post('/result', /*requireAuth,*/ celebrate({body: TestResultSchema}), asy
     }    
 });
 
-router.post('/', /* requireAuth,*/ celebrate({body: [NewClusterSchema]}), async (req: Request, res: Response, next: NextFunction) => {
+router.post('/', /* requireAuth,*/ celebrate({body: clusterSchema}), async (req: Request, res: Response, next: NextFunction) => {
     try {
-        ClusterTrackerService.addAndProcessClusterQueue(req.body)
-        res.send("request sucessfully enqueued to be processed")
+        const response = await ClusterTrackerService.addAndProcessClusterQueue(req.body)
+        if (response.success) res.status(200).send({ ...response})
+        else res.status(response.error.code).send({ ...response}) 
     } catch (error) {
         next(error);
     }
 });
-
-// router.post('/', /* requireAuth,*/ celebrate({body: NewClusterSchema}), async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const response = await ClusterTrackerService.createorUpdateCluster(req.body as IClusterInfo)
-//         if (response.success) res.status(200).send({ ...response})
-//         else {
-//             console.log(response)
-//             res.status(response.error.code).send({ ...response}) 
-//         }
-//     } catch (error) {
-//         next(error);
-//     }
-// });
 
 export default router;

@@ -35,6 +35,7 @@ class AuthService {
         const newUser : IUser = {
             email: userInputDTO.email,
             password: password_hash,
+            notification_token: userInputDTO.notification_token || "mock_token",
             user_id: nanoid()
         };
 

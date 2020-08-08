@@ -69,9 +69,10 @@ class Tracker {
     }
 
 
-   async addAndProcessClusterQueue(clusters: Array<IClusterInfo>) {
+    async addAndProcessClusterQueue(clusters: Array<IClusterInfo>): Promise<IHttpResponse> {
         clusterQueue.push(...clusters);
         this.processClusterQueue()
+        return ResponseHelper.processSuccessfulResponse("request sucessfully enqueued to be processed");
     }
 
     async processClusterQueue() {
