@@ -12,7 +12,8 @@ import * as bcrypt from 'bcrypt';
 const Token = require('../../models/Token');
 const UserModel = require('../../models/User');
 
-const jwtSecret = process.env.JWT_SECRET || '';
+const env_vars = process.env;
+const jwtSecret = env_vars.JWT_SECRET || '';
 
 class AuthService {
 
@@ -36,7 +37,7 @@ class AuthService {
             email: userInputDTO.email,
             notification_token: userInputDTO.notification_token,
             password: password_hash,
-            user_id: nanoid()
+            user_id: nanoid(),
         };
 
         const userRecord = await UserModel.createRecord(newUser);

@@ -67,7 +67,8 @@ var jwt = __importStar(require("jsonwebtoken"));
 var bcrypt = __importStar(require("bcrypt"));
 var Token = require('../../models/Token');
 var UserModel = require('../../models/User');
-var jwtSecret = process.env.JWT_SECRET || '';
+var env_vars = process.env;
+var jwtSecret = env_vars.JWT_SECRET || '';
 var AuthService = /** @class */ (function () {
     function AuthService() {
     }
@@ -94,7 +95,7 @@ var AuthService = /** @class */ (function () {
                             email: userInputDTO.email,
                             notification_token: userInputDTO.notification_token,
                             password: password_hash,
-                            user_id: nanoid_1.nanoid()
+                            user_id: nanoid_1.nanoid(),
                         };
                         return [4 /*yield*/, UserModel.createRecord(newUser)];
                     case 3:

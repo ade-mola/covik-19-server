@@ -113,7 +113,7 @@ var Tracker = /** @class */ (function () {
             return __generator(this, function (_a) {
                 clusterQueue.push.apply(clusterQueue, clusters);
                 this.processClusterQueue();
-                return [2 /*return*/];
+                return [2 /*return*/, Response_1.default.processSuccessfulResponse("request sucessfully enqueued to be processed")];
             });
         });
     };

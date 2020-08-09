@@ -1,8 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TestResultSchema = exports.NewClusterSchema = exports.EmailSchema = exports.TokenSchema = exports.UserSchema = void 0;
+exports.TestResultSchema = exports.clusterSchema = exports.NewClusterSchema = exports.EmailSchema = exports.TokenSchema = exports.ExistingUserSchema = exports.NewUserSchema = void 0;
 var celebrate_1 = require("celebrate");
-exports.UserSchema = celebrate_1.Joi.object().keys({
+exports.NewUserSchema = celebrate_1.Joi.object().keys({
+    email: celebrate_1.Joi.string().required().email(),
+    password: celebrate_1.Joi.string().min(5).max(255).required(),
+    notification_token: celebrate_1.Joi.string(),
+});
+exports.ExistingUserSchema = celebrate_1.Joi.object().keys({
     email: celebrate_1.Joi.string().required().email(),
     password: celebrate_1.Joi.string().min(5).max(255).required(),
     notification_token: celebrate_1.Joi.string(),
@@ -14,6 +19,7 @@ exports.NewClusterSchema = celebrate_1.Joi.object().keys({
     time: celebrate_1.Joi.string().required(),
     location: celebrate_1.Joi.string().required().regex(/-?\d+\.?\d*\:{1}-?\d+\.?\d*/)
 });
+exports.clusterSchema = celebrate_1.Joi.array().items(exports.NewClusterSchema);
 exports.TestResultSchema = celebrate_1.Joi.object().keys({
     userId: celebrate_1.Joi.string().required(),
     checkInTime: celebrate_1.Joi.string().required(),

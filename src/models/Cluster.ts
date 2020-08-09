@@ -56,7 +56,6 @@ module.exports.createRecord = async (data: ICluster): Promise <any> => {
 module.exports.readRecord = async (options: any, pagination?: IPagination): Promise <any> => {
     return await Cluster.find({
         ...processAlternatives(options),
-        // is_active: true
     });
 }
 
